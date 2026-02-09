@@ -24,6 +24,8 @@ export default function Home() {
   });
 
   const [showFormulas, setShowFormulas] = useState(false);
+  const [activePreset, setActivePreset] = useState<string | null>("balanced");
+  const [phasesManuallyModified, setPhasesManuallyModified] = useState(false);
 
   // Calculate results whenever inputs change
   const result = useMemo(() => simulateRetirement(inputs), [inputs]);
@@ -34,12 +36,45 @@ export default function Home() {
     router.replace(`/?${queryString}`, { scroll: false });
   }, [inputs, router]);
 
-  // Handle preset selection
+  // Check if inputs match any preset
+  useEffect(() => {
+    let matchedPreset: string | null = null;
+    for (const [key, preset] of Object.entries(PRESETS)) {
+      if (JSON.stringify(preset.inputs) === JSON.stringify(inputs)) {
+        matchedPreset = key;
+        break;
+      }
+    }
+    setActivePreset(matchedPreset);
+  }, [inputs]);
+
+  // Handle current age change - update first phase start age if phases haven't been modified
+  const handleCurrentAgeChange = (newAge: number) => {
+    if (!phasesManuallyModified && inputs.contributionPhases.length > 0) {
+      const updatedPhases = [...inputs.contributionPhases];
+      updatedPhases[0] = { ...updatedPhases[0], startAge: newAge };
+      setInputs({ ...inputs, currentAge: newAge, contributionPhases: updatedPhases });
+    }
+  };
+
+  // Handle preset selection with warning
   const loadPreset = (presetKey: string) => {
     const preset = PRESETS[presetKey];
-    if (preset) {
-      setInputs(preset.inputs);
+    if (!preset) return;
+
+    // Check if inputs have been modified from any preset
+    const isModified = activePreset === null;
+
+    if (isModified) {
+      const confirmed = window.confirm(
+        "Loading this preset will reset all your current inputs. Continue?"
+      );
+      if (!confirmed) return;
     }
+
+    setInputs(preset.inputs);
+    setActivePreset(presetKey);
+    setPhasesManuallyModified(false);
   };
 
   // Share functionality
@@ -53,20 +88,20 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
                 FIRE Calculator
               </h1>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mt-1 text-xs md:text-sm text-gray-600 dark:text-gray-400">
                 Plan your path to Financial Independence & Early Retirement
               </p>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setShowFormulas(!showFormulas)}
-                className={`px-4 py-2 text-sm rounded-md border ${
+                className={`px-3 md:px-4 py-2 text-xs md:text-sm rounded-md border ${
                   showFormulas
                     ? "bg-blue-600 text-white border-blue-600"
                     : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600"
@@ -76,7 +111,7 @@ export default function Home() {
               </button>
               <button
                 onClick={shareScenario}
-                className="px-4 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
+                className="px-3 md:px-4 py-2 text-xs md:text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
               >
                 Share Scenario
               </button>
@@ -85,16 +120,20 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* Presets */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-3">Quick Presets</h2>
-          <div className="flex gap-3">
+        <div className="mb-6 md:mb-8">
+          <h2 className="text-base md:text-lg font-semibold mb-3">Quick Presets</h2>
+          <div className="flex flex-wrap gap-2 md:gap-3">
             {Object.entries(PRESETS).map(([key, preset]) => (
               <button
                 key={key}
                 onClick={() => loadPreset(key)}
-                className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium"
+                className={`px-3 md:px-4 py-2 border rounded-md text-xs md:text-sm font-medium transition-colors ${
+                  activePreset === key
+                    ? "bg-blue-600 text-white border-blue-600 shadow-md"
+                    : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                }`}
               >
                 {preset.name}
               </button>
@@ -102,21 +141,22 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           {/* Left Column: Inputs */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky top-8">
-              <h2 className="text-2xl font-bold mb-6">Inputs</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 md:p-6 lg:sticky lg:top-8">
+              <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Inputs</h2>
               <InputsForm
                 inputs={inputs}
                 onChange={setInputs}
                 showFormulas={showFormulas}
+                onCurrentAgeChange={handleCurrentAgeChange}
               />
             </div>
           </div>
 
           {/* Right Column: Results */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 md:space-y-8">
             <ResultsSummary result={result} currentAge={inputs.currentAge} />
             <PortfolioChart
               rows={result.rows}
@@ -127,7 +167,7 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <footer className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-600 dark:text-gray-400">
+        <footer className="mt-12 md:mt-16 pt-6 md:pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-xs md:text-sm text-gray-600 dark:text-gray-400">
           <p>
             This calculator is for educational purposes only and does not constitute financial advice.
           </p>

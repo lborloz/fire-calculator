@@ -4,6 +4,7 @@
 
 export type CompoundingInterval = "monthly" | "yearly";
 export type InflationMode = "nominal" | "real";
+export type SpendInputType = "monthly" | "yearly";
 
 /**
  * Contribution phase - defines a period during which user makes regular contributions

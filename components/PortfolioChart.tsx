@@ -66,8 +66,8 @@ export default function PortfolioChart({
         <AreaChart data={chartData}>
           <defs>
             <linearGradient id="colorContributions" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.3} />
+              <stop offset="5%" stopColor="#F97316" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#F97316" stopOpacity={0.3} />
             </linearGradient>
             <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
@@ -93,7 +93,7 @@ export default function PortfolioChart({
             type="monotone"
             dataKey="contributions"
             stackId="1"
-            stroke="#3B82F6"
+            stroke="#F97316"
             fill="url(#colorContributions)"
             name="Contributions"
           />

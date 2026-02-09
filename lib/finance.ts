@@ -10,7 +10,7 @@ import {
   ContributionPhase,
 } from "./types";
 
-const MAX_SIMULATION_YEARS = 100;
+const MAX_AGE = 100;
 
 /**
  * Main simulation function
@@ -61,8 +61,9 @@ export function simulateRetirement(
     (a, b) => a.startAge - b.startAge
   );
 
-  // Run yearly simulation
-  for (let year = 0; year <= MAX_SIMULATION_YEARS; year++) {
+  // Run yearly simulation until age 100
+  const maxYears = MAX_AGE - currentAge;
+  for (let year = 0; year <= maxYears; year++) {
     const age = currentAge + year;
 
     // Determine if we've just reached retirement
@@ -74,7 +75,7 @@ export function simulateRetirement(
     // Calculate annual contribution for this year
     const annualContribution = retired
       ? 0
-      : calculateYearlyContribution(age, sortedPhases, retirementAge);
+      : calculateYearlyContribution(age, sortedPhases);
 
     // Add contributions to portfolio
     portfolio += annualContribution;
@@ -125,14 +126,13 @@ export function simulateRetirement(
  */
 function calculateYearlyContribution(
   age: number,
-  phases: ContributionPhase[],
-  retirementAge: number | null
+  phases: ContributionPhase[]
 ): number {
   let totalMonthlyContribution = 0;
 
   for (const phase of phases) {
     const startAge = phase.startAge;
-    const endAge = phase.endAge ?? retirementAge ?? Infinity;
+    const endAge = phase.endAge ?? Infinity; // If no end age, continue indefinitely
 
     if (age >= startAge && age < endAge) {
       totalMonthlyContribution += phase.monthlyContribution;
