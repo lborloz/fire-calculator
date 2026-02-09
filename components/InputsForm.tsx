@@ -33,6 +33,10 @@ export default function InputsForm({
   };
 
   const updatePhase = (index: number, phase: ContributionPhase) => {
+    // Ensure end age is always at least start age + 1 if defined
+    if (phase.endAge !== undefined && phase.endAge <= phase.startAge) {
+      phase = { ...phase, endAge: phase.startAge + 1 };
+    }
     const newPhases = [...inputs.contributionPhases];
     newPhases[index] = phase;
     updateInput("contributionPhases", newPhases);

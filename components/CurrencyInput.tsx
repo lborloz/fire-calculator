@@ -67,11 +67,12 @@ export default function CurrencyInput({
         className={className}
         inputMode="numeric"
       />
-      <div className="absolute right-0 top-0 bottom-0 flex flex-col border-l border-gray-300 dark:border-gray-600">
+      <div className="absolute right-0 top-0 bottom-0 flex flex-col w-6 border-l border-gray-300 dark:border-gray-600">
         <button
           type="button"
           onClick={increment}
-          className="flex-1 px-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-400 text-xs"
+          className="flex-1 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-400"
+          style={{ fontSize: '10px', lineHeight: '1' }}
           aria-label="Increment"
         >
           ▲
@@ -79,7 +80,8 @@ export default function CurrencyInput({
         <button
           type="button"
           onClick={decrement}
-          className="flex-1 px-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-400 text-xs border-t border-gray-300 dark:border-gray-600"
+          className="flex-1 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-400 border-t border-gray-300 dark:border-gray-600"
+          style={{ fontSize: '10px', lineHeight: '1' }}
           aria-label="Decrement"
         >
           ▼

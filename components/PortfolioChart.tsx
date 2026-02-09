@@ -38,7 +38,7 @@ export default function PortfolioChart({
   // Calculate max value for Y-axis based on visible lines
   const maxValue = useMemo(() => {
     if (!showContributions && !showGrowth) return 0;
-    
+
     return Math.max(...chartData.map(d => {
       if (showContributions && showGrowth) return d.portfolio;
       if (showContributions) return d.contributions;
@@ -101,7 +101,7 @@ export default function PortfolioChart({
       </div>
 
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 10, bottom: 30 }}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 30 }}>
           <defs>
             <linearGradient id="colorContributions" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#F97316" stopOpacity={0.8} />
@@ -127,13 +127,13 @@ export default function PortfolioChart({
             label={{
               value: "Portfolio Value",
               angle: -90,
-              position: "center",
-              offset: 0,
+              position: "insideLeft",
+              offset: 10,
               style: { textAnchor: 'middle', fill: 'currentColor' }
             }}
             className="dark:fill-gray-300"
             tick={{ fill: "currentColor" }}
-            width={100}
+            width={110}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend

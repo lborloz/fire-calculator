@@ -10,6 +10,7 @@ import InputsForm from "@/components/InputsForm";
 import ResultsSummary from "@/components/ResultsSummary";
 import YearlyTable from "@/components/YearlyTable";
 import PortfolioChart from "@/components/PortfolioChart";
+import SegmentedControl from "@/components/SegmentedControl";
 
 export default function Calculator() {
   const router = useRouter();
@@ -155,21 +156,14 @@ export default function Calculator() {
         {/* Presets */}
         <div className="mb-6 md:mb-8">
           <h2 className="text-base md:text-lg font-semibold mb-3">Quick Presets</h2>
-          <div className="flex flex-wrap gap-2 md:gap-3">
-            {Object.entries(PRESETS).map(([key, preset]) => (
-              <button
-                key={key}
-                onClick={() => loadPreset(key)}
-                className={`px-3 md:px-4 py-2 border rounded-md text-xs md:text-sm font-medium transition-colors ${
-                  activePreset === key
-                    ? "bg-blue-600 text-white border-blue-600 shadow-md"
-                    : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
-                }`}
-              >
-                {preset.name}
-              </button>
-            ))}
-          </div>
+          <SegmentedControl
+            options={Object.entries(PRESETS).map(([key, preset]) => ({
+              key,
+              label: preset.name,
+            }))}
+            value={activePreset}
+            onChange={loadPreset}
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">

@@ -22,7 +22,7 @@ describe("Financial Calculations", () => {
       };
 
       const result = simulateRetirement(inputs);
-      
+
       // FI target = (4000 * 12) / 0.04 * 1 = $1,200,000
       expect(result.fiTarget).toBeCloseTo(1200000, 0);
     });
@@ -43,7 +43,7 @@ describe("Financial Calculations", () => {
 
       const result = simulateRetirement(inputs);
       const firstYear = result.rows[0];
-      
+
       // With 12% annual return, monthly compounding gives ~12.68% effective rate
       // 100000 * (1 + 0.01)^12 ≈ 112682.50
       expect(firstYear.growth).toBeGreaterThan(12000);
@@ -66,7 +66,7 @@ describe("Financial Calculations", () => {
 
       const result = simulateRetirement(inputs);
       const firstYear = result.rows[0];
-      
+
       // 100000 * 0.10 = 10000
       expect(firstYear.growth).toBeCloseTo(10000, 0);
     });
@@ -89,18 +89,18 @@ describe("Financial Calculations", () => {
       };
 
       const result = simulateRetirement(inputs);
-      
+
       // Age 30-34: 1000/month = 12000/year
       expect(result.rows[0].contribution).toBe(12000);
-      
+
       // Age 35-39: 1000 + 500 = 1500/month = 18000/year
       const age35Row = result.rows.find(r => r.age === 35);
       expect(age35Row?.contribution).toBe(18000);
-      
+
       // Age 40-49: 500/month = 6000/year
       const age40Row = result.rows.find(r => r.age === 40);
       expect(age40Row?.contribution).toBe(6000);
-      
+
       // Age 50+: 0/month = 0/year
       const age50Row = result.rows.find(r => r.age === 50);
       expect(age50Row?.contribution).toBe(0);
@@ -123,10 +123,10 @@ describe("Financial Calculations", () => {
       };
 
       const result = simulateRetirement(inputs);
-      
+
       // Negative contribution = withdrawal
       expect(result.rows[0].contribution).toBe(-6000);
-      
+
       // Portfolio should decrease by withdrawal amount (minus growth)
       expect(result.rows[0].portfolioEnd).toBeLessThan(100000);
     });
@@ -148,12 +148,12 @@ describe("Financial Calculations", () => {
       };
 
       const result = simulateRetirement(inputs);
-      
+
       // Should retire when portfolio >= (36000 / 0.04) = $900,000
       expect(result.retirementAge).not.toBeNull();
       expect(result.retirementAge).toBeGreaterThan(30);
       expect(result.yearsToRetirement).not.toBeNull();
-      
+
       // Check that retirement flag is set correctly
       const retirementRow = result.rows.find(r => r.age === result.retirementAge);
       expect(retirementRow?.retired).toBe(true);
@@ -174,7 +174,7 @@ describe("Financial Calculations", () => {
       };
 
       const result = simulateRetirement(inputs);
-      
+
       // FI target = (36000 / 0.04) * 1.5 = $1,350,000
       expect(result.fiTarget).toBeCloseTo(1350000, 0);
     });
@@ -194,7 +194,7 @@ describe("Financial Calculations", () => {
       };
 
       const result = simulateRetirement(inputs);
-      
+
       // Real return = 10% - 3% = 7%
       // 100000 * 0.07 = 7000
       expect(result.rows[0].growth).toBeCloseTo(7000, 0);
@@ -215,7 +215,7 @@ describe("Financial Calculations", () => {
       };
 
       const result = simulateRetirement(inputs);
-      
+
       // Nominal mode ignores inflation, uses full 10%
       // 100000 * 0.10 = 10000
       expect(result.rows[0].growth).toBeCloseTo(10000, 0);
@@ -238,10 +238,10 @@ describe("Financial Calculations", () => {
       };
 
       const result = simulateRetirement(inputs);
-      
+
       // Should retire immediately (already have > FI target)
       expect(result.retirementAge).toBe(30);
-      
+
       // But still make contributions
       expect(result.rows[0].contribution).toBe(6000);
     });
@@ -261,10 +261,10 @@ describe("Financial Calculations", () => {
       };
 
       const result = simulateRetirement(inputs);
-      
+
       // Should simulate from 30 to 100 = 71 years
       expect(result.rows.length).toBeLessThanOrEqual(71);
-      
+
       const lastRow = result.rows[result.rows.length - 1];
       expect(lastRow.age).toBeLessThanOrEqual(100);
     });
@@ -284,10 +284,10 @@ describe("Financial Calculations", () => {
       };
 
       const result = simulateRetirement(inputs);
-      
+
       // Should retire immediately (3000000 >= (120000/0.04) = 3000000)
       expect(result.retirementAge).toBe(30);
-      
+
       // With 4% withdrawal rate and only 2% growth, portfolio should slowly deplete
       const lastRow = result.rows[result.rows.length - 1];
       expect(lastRow.portfolioEnd).toBeLessThan(3000000);
@@ -310,7 +310,7 @@ describe("Financial Calculations", () => {
       };
 
       const result = simulateRetirement(inputs);
-      
+
       // Should continue contributing all years
       const lastRow = result.rows[result.rows.length - 1];
       expect(lastRow.contribution).toBe(12000);
