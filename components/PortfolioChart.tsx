@@ -9,7 +9,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 import { formatCurrency } from "@/lib/finance";
@@ -116,45 +115,52 @@ export default function PortfolioChart({
             width={80}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend
-            verticalAlign="bottom"
-            height={36}
-            wrapperStyle={{ paddingTop: '30px', paddingBottom: '10px', cursor: 'pointer' }}
-            onClick={(data) => {
-              if (data.value === 'Contributions') {
-                setShowContributions(!showContributions);
-              } else if (data.value === 'Growth') {
-                setShowGrowth(!showGrowth);
-              }
-            }}
-            iconType="square"
-            formatter={(value: string) => {
-              const isActive = value === 'Contributions' ? showContributions : showGrowth;
-              return <span style={{ opacity: isActive ? 1 : 0.5 }}>{value}</span>;
-            }}
-          />
-          <Area
-            type="monotone"
-            dataKey="contributions"
-            stackId="1"
-            stroke="#F97316"
-            fill="url(#colorContributions)"
-            name="Contributions"
-            strokeOpacity={showContributions ? 1 : 0}
-            fillOpacity={showContributions ? 1 : 0}
-          />
-          <Area
-            type="monotone"
-            dataKey="growth"
-            stackId="1"
-            stroke="#10B981"
-            fill="url(#colorGrowth)"
-            name="Growth"
-            strokeOpacity={showGrowth ? 1 : 0}
-            fillOpacity={showGrowth ? 1 : 0}
-          />
+          {showContributions && (
+            <Area
+              type="monotone"
+              dataKey="contributions"
+              stackId="1"
+              stroke="#F97316"
+              fill="url(#colorContributions)"
+              name="Contributions"
+            />
+          )}
+          {showGrowth && (
+            <Area
+              type="monotone"
+              dataKey="growth"
+              stackId="1"
+              stroke="#10B981"
+              fill="url(#colorGrowth)"
+              name="Growth"
+            />
+          )}
         </AreaChart>
       </ResponsiveContainer>
+      <div className="flex flex-wrap items-center justify-center gap-4 pt-4 text-sm">
+        <button
+          type="button"
+          onClick={() => setShowContributions((prev) => !prev)}
+          className={`flex items-center gap-2 transition-opacity ${
+            showContributions ? "opacity-100" : "opacity-50"
+          }`}
+          aria-pressed={showContributions}
+        >
+          <span className="h-3 w-3 rounded-sm" style={{ backgroundColor: "#F97316" }} />
+          Contributions
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowGrowth((prev) => !prev)}
+          className={`flex items-center gap-2 transition-opacity ${
+            showGrowth ? "opacity-100" : "opacity-50"
+          }`}
+          aria-pressed={showGrowth}
+        >
+          <span className="h-3 w-3 rounded-sm" style={{ backgroundColor: "#10B981" }} />
+          Growth
+        </button>
+      </div>
     </div>
   );
 }

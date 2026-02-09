@@ -27,7 +27,7 @@ export default function YearlyTable({ rows }: YearlyTableProps) {
               </th>
               <th className="px-4 py-3 text-right font-semibold">Growth</th>
               <th className="px-4 py-3 text-right font-semibold">
-                Withdrawl
+                Retirement Spend
               </th>
               <th className="px-4 py-3 text-right font-semibold">
                 Portfolio End
