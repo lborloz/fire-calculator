@@ -79,7 +79,7 @@ export default function PortfolioChart({
       <h2 className="text-xl font-bold mb-4 dark:text-gray-100 text-gray-900">Portfolio Growth Over Time</h2>
 
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 70 }}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
           <defs>
             <linearGradient id="colorContributions" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#F97316" stopOpacity={0.8} />
@@ -89,19 +89,11 @@ export default function PortfolioChart({
               <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
               <stop offset="95%" stopColor="#10B981" stopOpacity={0.3} />
             </linearGradient>
-            <linearGradient id="colorContributionsDim" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#F97316" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="#F97316" stopOpacity={0.05} />
-            </linearGradient>
-            <linearGradient id="colorGrowthDim" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10B981" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="#10B981" stopOpacity={0.05} />
-            </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" className="stroke-gray-300 dark:stroke-gray-600" opacity={0.5} />
           <XAxis
             dataKey="age"
-            label={{ value: "Age", position: "insideBottom", offset: -10 }}
+            label={{ value: "Age", position: "insideBottom", offset: -5 }}
             className="dark:fill-gray-300"
             tick={{ fill: "currentColor" }}
           />
@@ -118,7 +110,7 @@ export default function PortfolioChart({
           <Legend
             verticalAlign="bottom"
             height={36}
-            wrapperStyle={{ paddingTop: '20px', cursor: 'pointer' }}
+            wrapperStyle={{ paddingTop: '30px', paddingBottom: '0px', cursor: 'pointer' }}
             onClick={(data) => {
               if (data.value === 'Contributions') {
                 setShowContributions(!showContributions);
@@ -129,25 +121,29 @@ export default function PortfolioChart({
             iconType="square"
             formatter={(value: string) => {
               const isActive = value === 'Contributions' ? showContributions : showGrowth;
-              return <span style={{ opacity: isActive ? 1 : 0.3 }}>{value}</span>;
+              return <span style={{ opacity: isActive ? 1 : 0.5 }}>{value}</span>;
             }}
           />
-          <Area
-            type="monotone"
-            dataKey="contributions"
-            stackId="1"
-            stroke={showContributions ? "#F97316" : "#F9731666"}
-            fill={showContributions ? "url(#colorContributions)" : "url(#colorContributionsDim)"}
-            name="Contributions"
-          />
-          <Area
-            type="monotone"
-            dataKey="growth"
-            stackId="1"
-            stroke={showGrowth ? "#10B981" : "#10B98166"}
-            fill={showGrowth ? "url(#colorGrowth)" : "url(#colorGrowthDim)"}
-            name="Growth"
-          />
+          {showContributions && (
+            <Area
+              type="monotone"
+              dataKey="contributions"
+              stackId="1"
+              stroke="#F97316"
+              fill="url(#colorContributions)"
+              name="Contributions"
+            />
+          )}
+          {showGrowth && (
+            <Area
+              type="monotone"
+              dataKey="growth"
+              stackId="1"
+              stroke="#10B981"
+              fill="url(#colorGrowth)"
+              name="Growth"
+            />
+          )}
         </AreaChart>
       </ResponsiveContainer>
     </div>

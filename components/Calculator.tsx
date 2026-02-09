@@ -49,21 +49,21 @@ export default function Calculator() {
   // Check if inputs match any preset (excluding preserved fields)
   useEffect(() => {
     let matchedPreset: string | null = null;
-    
+
     // Normalize phases for comparison by adjusting first phase start age to current age
     const normalizePhases = (phases: typeof inputs.contributionPhases, currentAge: number) => {
-      return phases.map((phase, index) => 
+      return phases.map((phase, index) =>
         index === 0 ? { ...phase, startAge: currentAge } : phase
       );
     };
-    
+
     for (const [key, preset] of Object.entries(PRESETS)) {
       const presetInputs = preset.inputs;
-      
+
       // Normalize both preset and current phases for comparison
       const normalizedPresetPhases = normalizePhases(presetInputs.contributionPhases, inputs.currentAge);
       const normalizedCurrentPhases = normalizePhases(inputs.contributionPhases, inputs.currentAge);
-      
+
       // Compare only non-preserved fields
       if (
         presetInputs.expectedYearlyReturn === inputs.expectedYearlyReturn &&
