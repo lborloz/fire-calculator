@@ -79,7 +79,7 @@ export default function PortfolioChart({
       <h2 className="text-xl font-bold mb-4 dark:text-gray-100 text-gray-900">Portfolio Growth Over Time</h2>
 
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 15 }}>
           <defs>
             <linearGradient id="colorContributions" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#F97316" stopOpacity={0.8} />
@@ -93,7 +93,7 @@ export default function PortfolioChart({
           <CartesianGrid strokeDasharray="3 3" className="stroke-gray-300 dark:stroke-gray-600" opacity={0.5} />
           <XAxis
             dataKey="age"
-            label={{ value: "Age", position: "insideBottom", offset: -5 }}
+            label={{ value: "Age", position: "insideBottom", offset: 0 }}
             className="dark:fill-gray-300"
             tick={{ fill: "currentColor" }}
           />
@@ -110,7 +110,7 @@ export default function PortfolioChart({
           <Legend
             verticalAlign="bottom"
             height={36}
-            wrapperStyle={{ paddingTop: '30px', paddingBottom: '0px', cursor: 'pointer' }}
+            wrapperStyle={{ paddingTop: '30px', paddingBottom: '10px', cursor: 'pointer' }}
             onClick={(data) => {
               if (data.value === 'Contributions') {
                 setShowContributions(!showContributions);
@@ -124,26 +124,26 @@ export default function PortfolioChart({
               return <span style={{ opacity: isActive ? 1 : 0.5 }}>{value}</span>;
             }}
           />
-          {showContributions && (
-            <Area
-              type="monotone"
-              dataKey="contributions"
-              stackId="1"
-              stroke="#F97316"
-              fill="url(#colorContributions)"
-              name="Contributions"
-            />
-          )}
-          {showGrowth && (
-            <Area
-              type="monotone"
-              dataKey="growth"
-              stackId="1"
-              stroke="#10B981"
-              fill="url(#colorGrowth)"
-              name="Growth"
-            />
-          )}
+          <Area
+            type="monotone"
+            dataKey="contributions"
+            stackId="1"
+            stroke="#F97316"
+            fill="url(#colorContributions)"
+            name="Contributions"
+            strokeOpacity={showContributions ? 1 : 0}
+            fillOpacity={showContributions ? 1 : 0}
+          />
+          <Area
+            type="monotone"
+            dataKey="growth"
+            stackId="1"
+            stroke="#10B981"
+            fill="url(#colorGrowth)"
+            name="Growth"
+            strokeOpacity={showGrowth ? 1 : 0}
+            fillOpacity={showGrowth ? 1 : 0}
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>
