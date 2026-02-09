@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^python3 /Users/luke/workspace/FIRE-Calculator/userinput\\.py$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

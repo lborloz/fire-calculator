@@ -40,6 +40,11 @@ export const metadata: Metadata = {
     description: "Calculate your path to Financial Independence and Early Retirement.",
     images: ["/og.svg"],
   },
+  icons: {
+    icon: "/android-chrome-192x192.svg",
+    apple: "/apple-touch-icon.svg",
+  },
+  manifest: "/manifest.webmanifest",
   robots: {
     index: true,
     follow: true,
