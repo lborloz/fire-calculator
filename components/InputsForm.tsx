@@ -107,7 +107,7 @@ export default function InputsForm({
             <CurrencyInput
               value={inputs.initialInvestment}
               onChange={(value) => updateInput("initialInvestment", value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600"
+              className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600"
               min={0}
               step={1000}
             />
@@ -143,7 +143,7 @@ export default function InputsForm({
             <CurrencyInput
               value={getRetirementSpendDisplay()}
               onChange={handleRetirementSpendChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600"
+              className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600"
               min={0}
               step={100}
             />
@@ -280,11 +280,11 @@ export default function InputsForm({
         </div>
       </section>
 
-      {/* Contribution Phases */}
+      {/* Cash Flow Phases */}
       <section>
         <h2 className="text-lg md:text-xl font-semibold mb-4">
-          Contribution Phases
-          <InfoTooltip content="Define different periods of contributions throughout your career. Phases can overlap (contributions will stack) or have gaps." />
+          Cash Flow Phases
+          <InfoTooltip content="Define different periods of contributions (or withdrawals) throughout your life. Phases can overlap (amounts will stack) or have gaps. Use negative values for withdrawals." />
         </h2>
         <div className="space-y-4">
           {inputs.contributionPhases.map((phase, index) => (
@@ -347,6 +347,7 @@ export default function InputsForm({
                 <div>
                   <label className="block text-xs font-medium mb-1">
                     Monthly ($)
+                    <InfoTooltip content="Monthly contribution amount. Use negative values to model withdrawals (e.g., -500 for $500/month withdrawal)." />
                   </label>
                   <CurrencyInput
                     value={phase.monthlyContribution}
@@ -356,8 +357,7 @@ export default function InputsForm({
                         monthlyContribution: value,
                       })
                     }
-                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-600"
-                    min={0}
+                    className="w-full px-2 py-1 pr-10 text-sm border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-600"
                     step={100}
                   />
                 </div>

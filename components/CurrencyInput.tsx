@@ -15,7 +15,7 @@ export default function CurrencyInput({
   value,
   onChange,
   className = "",
-  min = 0,
+  min,
   max,
   step = 1,
 }: CurrencyInputProps) {
@@ -47,24 +47,44 @@ export default function CurrencyInput({
   };
 
   const increment = () => {
-    const smartIncrement = getSmartIncrement(value);
-    onChange(Math.min(max ?? Infinity, value + smartIncrement));
+    const smartIncrement = getSmartIncrement(Math.abs(value));
+    const newValue = value + smartIncrement;
+    onChange(max !== undefined ? Math.min(max, newValue) : newValue);
   };
 
   const decrement = () => {
-    const smartIncrement = getSmartIncrement(value);
-    onChange(Math.max(min, value - smartIncrement));
+    const smartIncrement = getSmartIncrement(Math.abs(value));
+    const newValue = value - smartIncrement;
+    onChange(min !== undefined ? Math.max(min, newValue) : newValue);
   };
 
   return (
-    <input
-      type="number"
-      value={value}
-      onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-      step={getSmartIncrement(value)}
-      className={className}
-      min={min}
-      max={max}
-    />
+    <div className="relative">
+      <input
+        type="text"
+        value={formatWithCommas(value)}
+        onChange={handleChange}
+        className={className}
+        inputMode="numeric"
+      />
+      <div className="absolute right-0 top-0 bottom-0 flex flex-col border-l border-gray-300 dark:border-gray-600">
+        <button
+          type="button"
+          onClick={increment}
+          className="flex-1 px-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-400 text-xs"
+          aria-label="Increment"
+        >
+          ▲
+        </button>
+        <button
+          type="button"
+          onClick={decrement}
+          className="flex-1 px-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-400 text-xs border-t border-gray-300 dark:border-gray-600"
+          aria-label="Decrement"
+        >
+          ▼
+        </button>
+      </div>
+    </div>
   );
 }

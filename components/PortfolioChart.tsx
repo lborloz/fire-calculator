@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { YearRow } from "@/lib/types";
 import {
   AreaChart,
@@ -22,6 +23,9 @@ export default function PortfolioChart({
   rows,
   retirementAge,
 }: PortfolioChartProps) {
+  const [showContributions, setShowContributions] = useState(true);
+  const [showGrowth, setShowGrowth] = useState(true);
+
   // Transform data for stacked area chart
   const chartData = rows.map((row) => ({
     age: row.age,
@@ -30,6 +34,18 @@ export default function PortfolioChart({
     portfolio: row.portfolioEnd,
     retired: row.retired,
   }));
+
+  // Calculate max value for Y-axis based on visible lines
+  const maxValue = useMemo(() => {
+    if (!showContributions && !showGrowth) return 0;
+    
+    return Math.max(...chartData.map(d => {
+      if (showContributions && showGrowth) return d.portfolio;
+      if (showContributions) return d.contributions;
+      if (showGrowth) return d.growth;
+      return 0;
+    }));
+  }, [chartData, showContributions, showGrowth]);
 
   // Custom tooltip
   const CustomTooltip = ({ active, payload }: any) => {
@@ -60,10 +76,32 @@ export default function PortfolioChart({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-bold mb-4 dark:text-gray-100">Portfolio Growth Over Time</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold dark:text-gray-100">Portfolio Growth Over Time</h2>
+        <div className="flex gap-4 text-sm">
+          <label className="flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showContributions}
+              onChange={(e) => setShowContributions(e.target.checked)}
+              className="mr-2"
+            />
+            <span className="text-orange-600 dark:text-orange-400">Contributions</span>
+          </label>
+          <label className="flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showGrowth}
+              onChange={(e) => setShowGrowth(e.target.checked)}
+              className="mr-2"
+            />
+            <span className="text-green-600 dark:text-green-400">Growth</span>
+          </label>
+        </div>
+      </div>
 
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 10, bottom: 30 }}>
           <defs>
             <linearGradient id="colorContributions" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#F97316" stopOpacity={0.8} />
@@ -82,19 +120,20 @@ export default function PortfolioChart({
             tick={{ fill: "currentColor" }}
           />
           <YAxis
+            domain={[0, maxValue]}
             tickFormatter={(value) =>
               `$${(value / 1000).toFixed(0)}k`
             }
             label={{
               value: "Portfolio Value",
               angle: -90,
-              position: "insideLeft",
-              offset: -5,
+              position: "center",
+              offset: 0,
               style: { textAnchor: 'middle', fill: 'currentColor' }
             }}
             className="dark:fill-gray-300"
             tick={{ fill: "currentColor" }}
-            width={90}
+            width={100}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend
@@ -102,22 +141,26 @@ export default function PortfolioChart({
             height={36}
             wrapperStyle={{ paddingBottom: '10px' }}
           />
-          <Area
-            type="monotone"
-            dataKey="contributions"
-            stackId="1"
-            stroke="#F97316"
-            fill="url(#colorContributions)"
-            name="Contributions"
-          />
-          <Area
-            type="monotone"
-            dataKey="growth"
-            stackId="1"
-            stroke="#10B981"
-            fill="url(#colorGrowth)"
-            name="Growth"
-          />
+          {showContributions && (
+            <Area
+              type="monotone"
+              dataKey="contributions"
+              stackId="1"
+              stroke="#F97316"
+              fill="url(#colorContributions)"
+              name="Contributions"
+            />
+          )}
+          {showGrowth && (
+            <Area
+              type="monotone"
+              dataKey="growth"
+              stackId="1"
+              stroke="#10B981"
+              fill="url(#colorGrowth)"
+              name="Growth"
+            />
+          )}
         </AreaChart>
       </ResponsiveContainer>
     </div>
