@@ -34,7 +34,7 @@ export default function Calculator() {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
-  const [activePreset, setActivePreset] = useState<string | null>("balanced");
+  const [activePreset, setActivePreset] = useState<string | null>(null);
   const [phasesManuallyModified, setPhasesManuallyModified] = useState(false);
 
   // Calculate results whenever inputs change
@@ -49,8 +49,21 @@ export default function Calculator() {
   // Check if inputs match any preset (excluding preserved fields)
   useEffect(() => {
     let matchedPreset: string | null = null;
+    
+    // Normalize phases for comparison by adjusting first phase start age to current age
+    const normalizePhases = (phases: typeof inputs.contributionPhases, currentAge: number) => {
+      return phases.map((phase, index) => 
+        index === 0 ? { ...phase, startAge: currentAge } : phase
+      );
+    };
+    
     for (const [key, preset] of Object.entries(PRESETS)) {
       const presetInputs = preset.inputs;
+      
+      // Normalize both preset and current phases for comparison
+      const normalizedPresetPhases = normalizePhases(presetInputs.contributionPhases, inputs.currentAge);
+      const normalizedCurrentPhases = normalizePhases(inputs.contributionPhases, inputs.currentAge);
+      
       // Compare only non-preserved fields
       if (
         presetInputs.expectedYearlyReturn === inputs.expectedYearlyReturn &&
@@ -59,7 +72,7 @@ export default function Calculator() {
         presetInputs.compoundingInterval === inputs.compoundingInterval &&
         presetInputs.safeWithdrawalRate === inputs.safeWithdrawalRate &&
         presetInputs.retirementBufferMultiplier === inputs.retirementBufferMultiplier &&
-        JSON.stringify(presetInputs.contributionPhases) === JSON.stringify(inputs.contributionPhases)
+        JSON.stringify(normalizedPresetPhases) === JSON.stringify(normalizedCurrentPhases)
       ) {
         matchedPreset = key;
         break;
@@ -157,9 +170,9 @@ export default function Calculator() {
         <div className="mb-6 md:mb-8">
           <h2 className="text-base md:text-lg font-semibold mb-3">Quick Presets</h2>
           <SegmentedControl
-            options={Object.entries(PRESETS).map(([key, preset]) => ({
+            options={['conservative', 'balanced', 'aggressive'].map((key) => ({
               key,
-              label: preset.name,
+              label: PRESETS[key].name,
             }))}
             value={activePreset}
             onChange={loadPreset}

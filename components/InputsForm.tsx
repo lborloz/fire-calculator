@@ -4,6 +4,7 @@ import { RetirementInputs, ContributionPhase, SpendInputType } from "@/lib/types
 import { useState } from "react";
 import InfoTooltip from "./InfoTooltip";
 import CurrencyInput from "./CurrencyInput";
+import NumberInput from "./NumberInput";
 
 interface InputsFormProps {
   inputs: RetirementInputs;
@@ -78,22 +79,21 @@ export default function InputsForm({
     <div className="space-y-6 md:space-y-8">
       {/* User Profile */}
       <section>
-        <h2 className="text-lg md:text-xl font-semibold mb-4">User Profile</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
               Current Age
               <InfoTooltip content="Your current age. The calculator will simulate from this age until age 100 or retirement." />
             </label>
-            <input
-              type="number"
+            <NumberInput
               value={inputs.currentAge}
-              onChange={(e) =>
-                handleCurrentAgeChange(parseFloat(e.target.value))
+              onChange={(value) =>
+                handleCurrentAgeChange(value ?? 18)
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600"
-              min="18"
-              max="80"
+              className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+              min={18}
+              max={80}
+              step={1}
             />
           </div>
         </div>
@@ -101,24 +101,23 @@ export default function InputsForm({
 
       {/* Financial Inputs */}
       <section>
-        <h2 className="text-lg md:text-xl font-semibold mb-4">Financial Inputs</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
               Initial Investment ($)
               <InfoTooltip content="Your current portfolio balance or starting investment amount. This is treated as the first contribution." />
             </label>
             <CurrencyInput
               value={inputs.initialInvestment}
               onChange={(value) => updateInput("initialInvestment", value)}
-              className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600"
+              className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
               min={0}
               step={1000}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
               Retirement Spending ($)
               <InfoTooltip content="How much you plan to spend in retirement. Used to calculate your FI target number based on the Safe Withdrawal Rate." />
             </label>
@@ -147,7 +146,7 @@ export default function InputsForm({
             <CurrencyInput
               value={getRetirementSpendDisplay()}
               onChange={handleRetirementSpendChange}
-              className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600"
+              className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
               min={0}
               step={100}
             />
@@ -159,43 +158,41 @@ export default function InputsForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
               Expected Yearly Return (%)
               <InfoTooltip content="Your expected annual investment return rate. Historical stock market average is ~10% nominal. Be conservative for planning." />
             </label>
-            <input
-              type="number"
+            <NumberInput
               value={inputs.expectedYearlyReturn}
-              onChange={(e) =>
-                updateInput("expectedYearlyReturn", parseFloat(e.target.value))
+              onChange={(value) =>
+                updateInput("expectedYearlyReturn", value ?? 10)
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600"
-              min="0"
-              max="20"
-              step="0.1"
+              className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+              min={0}
+              max={20}
+              step={0.1}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
               Inflation Rate (%)
               <InfoTooltip content="Expected annual inflation rate. Historical US average is ~3%. This adjusts your returns in Real mode." />
             </label>
-            <input
-              type="number"
+            <NumberInput
               value={inputs.inflationRate}
-              onChange={(e) =>
-                updateInput("inflationRate", parseFloat(e.target.value))
+              onChange={(value) =>
+                updateInput("inflationRate", value ?? 3)
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600"
-              min="0"
-              max="10"
-              step="0.1"
+              className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+              min={0}
+              max={10}
+              step={0.1}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
               Inflation Mode
               <InfoTooltip content="Real mode (recommended): Adjusts returns for inflation and treats spending as today's dollars. Nominal mode: Uses raw returns without adjustment." />
             </label>
@@ -204,7 +201,7 @@ export default function InputsForm({
               onChange={(e) =>
                 updateInput("inflationMode", e.target.value as "nominal" | "real")
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
             >
               <option value="real">Real (Adjusted)</option>
               <option value="nominal">Nominal</option>
@@ -218,7 +215,7 @@ export default function InputsForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
               Compounding Interval
               <InfoTooltip content="How often returns compound. Monthly compounding gives slightly higher returns than yearly due to compound interest." />
             </label>
@@ -230,7 +227,7 @@ export default function InputsForm({
                   e.target.value as "monthly" | "yearly"
                 )
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
             >
               <option value="monthly">Monthly</option>
               <option value="yearly">Yearly</option>
@@ -238,7 +235,7 @@ export default function InputsForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
               Safe Withdrawal Rate (%)
               <InfoTooltip content="Percentage of portfolio you can safely withdraw annually. The '4% rule' is based on historical success rates. Lower rates are more conservative." />
             </label>
@@ -259,7 +256,7 @@ export default function InputsForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
               Retirement Buffer Multiplier
               <InfoTooltip content="Safety buffer for your FI target. 1.0x = no buffer, 1.25x = 25% extra cushion. Higher values delay retirement but increase security." />
             </label>
@@ -286,7 +283,7 @@ export default function InputsForm({
 
       {/* Cash Flow Phases */}
       <section>
-        <h2 className="text-lg md:text-xl font-semibold mb-4">
+        <h2 className="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
           Cash Flow Phases
           <InfoTooltip content="Define different periods of contributions (or withdrawals) throughout your life. Phases can overlap (amounts will stack) or have gaps. Use negative values for withdrawals." />
         </h2>
@@ -313,17 +310,17 @@ export default function InputsForm({
                   <label className="block text-xs font-medium mb-1">
                     Start Age
                   </label>
-                  <input
-                    type="number"
+                  <NumberInput
                     value={phase.startAge}
-                    onChange={(e) =>
+                    onChange={(value) =>
                       updatePhase(index, {
                         ...phase,
-                        startAge: parseFloat(e.target.value),
+                        startAge: value ?? inputs.currentAge,
                       })
                     }
-                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-600"
+                    className="w-full px-2 py-1 pr-8 text-sm border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                     min={inputs.currentAge}
+                    step={1}
                   />
                 </div>
 
@@ -331,20 +328,18 @@ export default function InputsForm({
                   <label className="block text-xs font-medium mb-1">
                     End Age
                   </label>
-                  <input
-                    type="number"
-                    value={phase.endAge ?? ""}
-                    onChange={(e) =>
+                  <NumberInput
+                    value={phase.endAge}
+                    onChange={(value) =>
                       updatePhase(index, {
                         ...phase,
-                        endAge: e.target.value
-                          ? parseFloat(e.target.value)
-                          : undefined,
+                        endAge: value,
                       })
                     }
                     placeholder="Ongoing"
-                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-600"
+                    className="w-full px-2 py-1 pr-8 text-sm border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                     min={phase.startAge}
+                    step={1}
                   />
                 </div>
 
@@ -361,7 +356,7 @@ export default function InputsForm({
                         monthlyContribution: value,
                       })
                     }
-                    className="w-full px-2 py-1 pr-10 text-sm border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-600"
+                    className="w-full px-2 py-1 pr-10 text-sm border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                     step={100}
                   />
                 </div>

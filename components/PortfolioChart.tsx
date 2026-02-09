@@ -76,32 +76,10 @@ export default function PortfolioChart({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold dark:text-gray-100">Portfolio Growth Over Time</h2>
-        <div className="flex gap-4 text-sm">
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showContributions}
-              onChange={(e) => setShowContributions(e.target.checked)}
-              className="mr-2"
-            />
-            <span className="text-orange-600 dark:text-orange-400">Contributions</span>
-          </label>
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showGrowth}
-              onChange={(e) => setShowGrowth(e.target.checked)}
-              className="mr-2"
-            />
-            <span className="text-green-600 dark:text-green-400">Growth</span>
-          </label>
-        </div>
-      </div>
+      <h2 className="text-xl font-bold mb-4 dark:text-gray-100 text-gray-900">Portfolio Growth Over Time</h2>
 
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 30 }}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 70 }}>
           <defs>
             <linearGradient id="colorContributions" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#F97316" stopOpacity={0.8} />
@@ -110,6 +88,14 @@ export default function PortfolioChart({
             <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
               <stop offset="95%" stopColor="#10B981" stopOpacity={0.3} />
+            </linearGradient>
+            <linearGradient id="colorContributionsDim" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#F97316" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="#F97316" stopOpacity={0.05} />
+            </linearGradient>
+            <linearGradient id="colorGrowthDim" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#10B981" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="#10B981" stopOpacity={0.05} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" className="stroke-gray-300 dark:stroke-gray-600" opacity={0.5} />
@@ -124,43 +110,44 @@ export default function PortfolioChart({
             tickFormatter={(value) =>
               `$${(value / 1000).toFixed(0)}k`
             }
-            label={{
-              value: "Portfolio Value",
-              angle: -90,
-              position: "insideLeft",
-              offset: 10,
-              style: { textAnchor: 'middle', fill: 'currentColor' }
-            }}
             className="dark:fill-gray-300"
             tick={{ fill: "currentColor" }}
-            width={110}
+            width={80}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend
-            verticalAlign="top"
+            verticalAlign="bottom"
             height={36}
-            wrapperStyle={{ paddingBottom: '10px' }}
+            wrapperStyle={{ paddingTop: '20px', cursor: 'pointer' }}
+            onClick={(data) => {
+              if (data.value === 'Contributions') {
+                setShowContributions(!showContributions);
+              } else if (data.value === 'Growth') {
+                setShowGrowth(!showGrowth);
+              }
+            }}
+            iconType="square"
+            formatter={(value: string) => {
+              const isActive = value === 'Contributions' ? showContributions : showGrowth;
+              return <span style={{ opacity: isActive ? 1 : 0.3 }}>{value}</span>;
+            }}
           />
-          {showContributions && (
-            <Area
-              type="monotone"
-              dataKey="contributions"
-              stackId="1"
-              stroke="#F97316"
-              fill="url(#colorContributions)"
-              name="Contributions"
-            />
-          )}
-          {showGrowth && (
-            <Area
-              type="monotone"
-              dataKey="growth"
-              stackId="1"
-              stroke="#10B981"
-              fill="url(#colorGrowth)"
-              name="Growth"
-            />
-          )}
+          <Area
+            type="monotone"
+            dataKey="contributions"
+            stackId="1"
+            stroke={showContributions ? "#F97316" : "#F9731666"}
+            fill={showContributions ? "url(#colorContributions)" : "url(#colorContributionsDim)"}
+            name="Contributions"
+          />
+          <Area
+            type="monotone"
+            dataKey="growth"
+            stackId="1"
+            stroke={showGrowth ? "#10B981" : "#10B98166"}
+            fill={showGrowth ? "url(#colorGrowth)" : "url(#colorGrowthDim)"}
+            name="Growth"
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>
