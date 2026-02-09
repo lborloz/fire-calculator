@@ -23,7 +23,16 @@ export default function Home() {
     return DEFAULT_INPUTS;
   });
 
-  const [showFormulas, setShowFormulas] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  // Apply dark mode to document
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
   const [activePreset, setActivePreset] = useState<string | null>("balanced");
   const [phasesManuallyModified, setPhasesManuallyModified] = useState(false);
 
@@ -67,12 +76,27 @@ export default function Home() {
 
     if (isModified) {
       const confirmed = window.confirm(
-        "Loading this preset will reset all your current inputs. Continue?"
+        "Loading this preset will reset some of your inputs (except age, initial investment, and retirement spending). Continue?"
       );
       if (!confirmed) return;
     }
 
-    setInputs(preset.inputs);
+    // Preserve current age, initial investment, and retirement spending
+    const newInputs = {
+      ...preset.inputs,
+      currentAge: inputs.currentAge,
+      initialInvestment: inputs.initialInvestment,
+      monthlyRetirementSpend: inputs.monthlyRetirementSpend,
+      contributionPhases: preset.inputs.contributionPhases.map((phase, index) => {
+        // Update first phase start age to match current age
+        if (index === 0) {
+          return { ...phase, startAge: inputs.currentAge };
+        }
+        return phase;
+      }),
+    };
+
+    setInputs(newInputs);
     setActivePreset(presetKey);
     setPhasesManuallyModified(false);
   };
@@ -92,7 +116,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
-                FIRE Calculator
+                🔥 FIRE Calculator
               </h1>
               <p className="mt-1 text-xs md:text-sm text-gray-600 dark:text-gray-400">
                 Plan your path to Financial Independence & Early Retirement
@@ -100,14 +124,11 @@ export default function Home() {
             </div>
             <div className="flex gap-2">
               <button
-                onClick={() => setShowFormulas(!showFormulas)}
-                className={`px-3 md:px-4 py-2 text-xs md:text-sm rounded-md border ${
-                  showFormulas
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600"
-                }`}
+                onClick={() => setDarkMode(!darkMode)}
+                className="px-3 md:px-4 py-2 text-xs md:text-sm rounded-md border bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+                aria-label="Toggle dark mode"
               >
-                {showFormulas ? "Hide" : "Show"} Math
+                {darkMode ? "☀️" : "🌙"}
               </button>
               <button
                 onClick={shareScenario}
@@ -149,7 +170,6 @@ export default function Home() {
               <InputsForm
                 inputs={inputs}
                 onChange={setInputs}
-                showFormulas={showFormulas}
                 onCurrentAgeChange={handleCurrentAgeChange}
               />
             </div>

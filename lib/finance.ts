@@ -72,10 +72,8 @@ export function simulateRetirement(
       retirementAge = age;
     }
 
-    // Calculate annual contribution for this year
-    const annualContribution = retired
-      ? 0
-      : calculateYearlyContribution(age, sortedPhases);
+    // Calculate annual contribution for this year (phases can extend past retirement)
+    const annualContribution = calculateYearlyContribution(age, sortedPhases);
 
     // Add contributions to portfolio
     portfolio += annualContribution;

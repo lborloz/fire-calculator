@@ -1,4 +1,4 @@
-# FIRE Calculator
+# 🔥 FIRE Calculator
 
 A pure client-side Financial Independence / Retire Early (FIRE) calculator built with Next.js, TypeScript, and Tailwind CSS.
 
@@ -6,12 +6,14 @@ A pure client-side Financial Independence / Retire Early (FIRE) calculator built
 
 - **Pure Client-Side**: No backend, databases, or localStorage
 - **Real-time Calculations**: Instant updates as you adjust inputs
-- **Contribution Phases**: Model multiple contribution periods throughout your career
+- **Dark Mode**: Toggle between light and dark themes with high contrast
+- **Contribution Phases**: Model multiple contribution periods throughout your career (even after reaching FI)
 - **Inflation Modes**: Toggle between nominal and real (inflation-adjusted) returns
 - **Visual Analytics**: Interactive charts showing portfolio growth over time
 - **Scenario Sharing**: Save and share scenarios via URL parameters
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Preset Scenarios**: Quick-start with Conservative, Balanced, or Aggressive plans
+- **Smart Inputs**: Currency inputs with comma formatting and intelligent increment arrows
 
 ## Getting Started
 
@@ -37,6 +39,28 @@ npm run dev
 ```bash
 npm run build
 npm start
+```
+
+## GitHub Pages Deployment
+
+This project is configured for automatic deployment to GitHub Pages via GitHub Actions.
+
+### Setup Instructions
+
+1. Go to your repository Settings → Pages
+2. Under "Build and deployment", select "Source: GitHub Actions"
+3. Push to the `main` branch
+4. The workflow will automatically build and deploy your site
+
+The site will be available at: `https://[your-username].github.io/FIRE-Calculator/`
+
+### Manual Deployment
+
+To deploy manually:
+
+```bash
+npm run build
+# The static site will be in the 'out' directory
 ```
 
 ## Project Structure
@@ -112,9 +136,32 @@ Where:
 2. **No Taxes**: Does not account for tax implications of contributions or withdrawals
 3. **No Asset Allocation**: Single blended return rate
 4. **Deterministic**: No Monte Carlo simulation or probability ranges
-5. **Max 100 Years**: Simulation stops after 100 years
-6. **Annual Withdrawals**: Withdrawals occur once per year
-7. **Immediate Retirement**: User retires as soon as FI target is reached
+5. **Age Limit**: Simulation runs until age 100
+6. **Flexible Contributions**: Phase contributions can continue even after reaching FI
+7. **Annual Withdrawals**: Withdrawals occur once per year (at year end)
+
+## New Features (Latest Updates)
+
+### Enhanced UI/UX
+- **Dark Mode Toggle**: High-contrast dark theme with a sun/moon toggle button
+- **Smart Currency Inputs**: Automatic increment arrows that scale based on value magnitude
+  - Values < 100: increment by 10
+  - Values 100-999: increment by 100
+  - Values 1,000-99,999: increment by 1,000
+  - Values 100,000+: increment by 10,000
+- **Improved Chart Layout**: Fixed overlapping labels and better spacing
+- **Fire Emoji**: Added 🔥 to the title for visual flair
+
+### Calculation Improvements
+- **Post-Retirement Contributions**: Phases now contribute even after reaching FI (useful for modeling continued work or "Coast FIRE")
+- **Preserved Inputs**: Switching presets now preserves your current age, initial investment, and retirement spending
+- **Auto-updating Phases**: First phase start age automatically updates when you change your current age
+
+### Better Visual Feedback
+- **Highlighted Presets**: Active preset button shows in blue
+- **Monthly/Yearly Toggle**: Retirement spending can be input as monthly or yearly, with automatic conversion shown below
+- **Effective Return Display**: Always shows the effective return calculation in Real mode
+- **Better Chart Colors**: Orange contributions stand out better against the green growth curve
 
 ## Edge Cases Handled
 

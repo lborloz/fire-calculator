@@ -8,14 +8,12 @@ import CurrencyInput from "./CurrencyInput";
 interface InputsFormProps {
   inputs: RetirementInputs;
   onChange: (inputs: RetirementInputs) => void;
-  showFormulas: boolean;
   onCurrentAgeChange?: (age: number) => void;
 }
 
 export default function InputsForm({
   inputs,
   onChange,
-  showFormulas,
   onCurrentAgeChange,
 }: InputsFormProps) {
   const [spendInputType, setSpendInputType] = useState<SpendInputType>("monthly");
@@ -149,11 +147,11 @@ export default function InputsForm({
               min={0}
               step={100}
             />
-            {showFormulas && (
-              <p className="text-xs text-gray-500 mt-1">
-                Annual spend = ${(inputs.monthlyRetirementSpend * 12).toLocaleString()}
-              </p>
-            )}
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {spendInputType === "monthly"
+                ? `≈ $${(inputs.monthlyRetirementSpend * 12).toLocaleString()}/year`
+                : `≈ $${(inputs.monthlyRetirementSpend).toLocaleString()}/month`}
+            </p>
           </div>
 
           <div>
@@ -207,8 +205,8 @@ export default function InputsForm({
               <option value="real">Real (Adjusted)</option>
               <option value="nominal">Nominal</option>
             </select>
-            {showFormulas && inputs.inflationMode === "real" && (
-              <p className="text-xs text-gray-500 mt-1">
+            {inputs.inflationMode === "real" && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Effective return = {inputs.expectedYearlyReturn}% - {inputs.inflationRate}% ={" "}
                 {(inputs.expectedYearlyReturn - inputs.inflationRate).toFixed(1)}%
               </p>

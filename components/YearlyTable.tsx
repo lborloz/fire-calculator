@@ -13,13 +13,13 @@ export default function YearlyTable({ rows }: YearlyTableProps) {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-      <h2 className="text-xl font-bold p-4 border-b dark:border-gray-700">
+      <h2 className="text-xl font-bold p-4 border-b dark:border-gray-700 dark:text-gray-100">
         Year-by-Year Breakdown
       </h2>
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100 dark:bg-gray-700">
+          <thead className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
             <tr>
               <th className="px-4 py-3 text-left font-semibold">Age</th>
               <th className="px-4 py-3 text-right font-semibold">
@@ -44,10 +44,10 @@ export default function YearlyTable({ rows }: YearlyTableProps) {
                 key={index}
                 className={
                   row.retired
-                    ? "bg-green-50 dark:bg-green-950"
+                    ? "bg-green-50 dark:bg-green-950/30"
                     : index % 2 === 0
                     ? "bg-white dark:bg-gray-800"
-                    : "bg-gray-50 dark:bg-gray-850"
+                    : "bg-gray-50 dark:bg-gray-750"
                 }
               >
                 <td className="px-4 py-2 font-medium">{row.age}</td>

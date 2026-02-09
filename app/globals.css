@@ -20,6 +20,28 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Enhanced dark mode with better contrast */
+.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+}
+
+.dark body {
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
+.dark input,
+.dark select {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+
+.dark input::placeholder {
+  color: #94a3b8;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

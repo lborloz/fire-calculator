@@ -60,10 +60,10 @@ export default function PortfolioChart({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-bold mb-4">Portfolio Growth Over Time</h2>
+      <h2 className="text-xl font-bold mb-4 dark:text-gray-100">Portfolio Growth Over Time</h2>
 
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={chartData}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 30 }}>
           <defs>
             <linearGradient id="colorContributions" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#F97316" stopOpacity={0.8} />
@@ -74,21 +74,34 @@ export default function PortfolioChart({
               <stop offset="95%" stopColor="#10B981" stopOpacity={0.3} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
+          <CartesianGrid strokeDasharray="3 3" className="stroke-gray-300 dark:stroke-gray-600" opacity={0.5} />
           <XAxis
             dataKey="age"
-            label={{ value: "Age", position: "insideBottom", offset: -5 }}
-            stroke="#6B7280"
+            label={{ value: "Age", position: "insideBottom", offset: -10 }}
+            className="dark:fill-gray-300"
+            tick={{ fill: "currentColor" }}
           />
           <YAxis
             tickFormatter={(value) =>
               `$${(value / 1000).toFixed(0)}k`
             }
-            label={{ value: "Portfolio Value", angle: -90, position: "insideLeft" }}
-            stroke="#6B7280"
+            label={{
+              value: "Portfolio Value",
+              angle: -90,
+              position: "insideLeft",
+              offset: 10,
+              style: { textAnchor: 'middle', fill: 'currentColor' }
+            }}
+            className="dark:fill-gray-300"
+            tick={{ fill: "currentColor" }}
+            width={80}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend />
+          <Legend
+            verticalAlign="top"
+            height={36}
+            wrapperStyle={{ paddingBottom: '10px' }}
+          />
           <Area
             type="monotone"
             dataKey="contributions"
@@ -107,12 +120,6 @@ export default function PortfolioChart({
           />
         </AreaChart>
       </ResponsiveContainer>
-
-      {retirementAge && (
-        <div className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
-          🎉 Retirement milestone reached at age {retirementAge}
-        </div>
-      )}
     </div>
   );
 }
