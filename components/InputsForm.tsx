@@ -18,6 +18,7 @@ export default function InputsForm({
   onCurrentAgeChange,
 }: InputsFormProps) {
   const [spendInputType, setSpendInputType] = useState<SpendInputType>("monthly");
+  const [phaseErrors, setPhaseErrors] = useState<Record<number, string>>({});
 
   const updateInput = <K extends keyof RetirementInputs>(
     key: K,
@@ -34,13 +35,18 @@ export default function InputsForm({
   };
 
   const updatePhase = (index: number, phase: ContributionPhase) => {
-    // Ensure end age is always at least start age + 1 if defined
-    if (phase.endAge !== undefined && phase.endAge <= phase.startAge) {
-      phase = { ...phase, endAge: phase.startAge + 1 };
-    }
     const newPhases = [...inputs.contributionPhases];
     newPhases[index] = phase;
     updateInput("contributionPhases", newPhases);
+
+    // Validate end age
+    const newErrors = { ...phaseErrors };
+    if (phase.endAge !== undefined && phase.endAge <= phase.startAge) {
+      newErrors[index] = `End age must be greater than start age (${phase.startAge})`;
+    } else {
+      delete newErrors[index];
+    }
+    setPhaseErrors(newErrors);
   };
 
   const addPhase = () => {
@@ -345,7 +351,11 @@ export default function InputsForm({
                       })
                     }
                     placeholder="Ongoing"
-                    className="w-full px-2 py-1 pr-8 text-sm border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                    className={`w-full px-2 py-1 pr-8 text-sm border rounded dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${
+                      phaseErrors[index]
+                        ? "border-red-500 dark:border-red-500"
+                        : "border-gray-300 dark:border-gray-600"
+                    }`}
                     min={phase.startAge}
                     step={1}
                   />
@@ -369,6 +379,11 @@ export default function InputsForm({
                   />
                 </div>
               </div>
+              {phaseErrors[index] && (
+                <p className="text-xs text-red-600 dark:text-red-400 mt-2">
+                  {phaseErrors[index]}
+                </p>
+              )}
             </div>
           ))}
 

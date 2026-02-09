@@ -69,7 +69,7 @@ export default function ResultsSummary({
           <p className="text-sm text-yellow-800 dark:text-yellow-200">
             <strong>Note:</strong> Based on current inputs, you may not reach your
             FI target within your life expectancy ({lifeExpectancy - currentAge}{" "}
-            years). Consider increasing contributions or adjusting your retirement
+            more years). Consider increasing contributions or adjusting your retirement
             spending.
           </p>
         </div>

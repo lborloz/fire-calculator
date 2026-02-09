@@ -31,15 +31,21 @@ export default function NumberInput({
     }
   };
 
+  // Helper to round to avoid floating point precision issues
+  const roundToStep = (num: number): number => {
+    const decimals = (step.toString().split('.')[1] || '').length;
+    return Number(num.toFixed(decimals));
+  };
+
   const increment = () => {
     const currentValue = value ?? (min !== undefined ? min : 0);
-    const newValue = currentValue + step;
+    const newValue = roundToStep(currentValue + step);
     onChange(max !== undefined ? Math.min(max, newValue) : newValue);
   };
 
   const decrement = () => {
     const currentValue = value ?? (min !== undefined ? min : 0);
-    const newValue = currentValue - step;
+    const newValue = roundToStep(currentValue - step);
     onChange(min !== undefined ? Math.max(min, newValue) : newValue);
   };
 

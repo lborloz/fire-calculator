@@ -27,7 +27,7 @@ export default function YearlyTable({ rows }: YearlyTableProps) {
               </th>
               <th className="px-4 py-3 text-right font-semibold">Growth</th>
               <th className="px-4 py-3 text-right font-semibold">
-                Withdrawal
+                Withdrawl
               </th>
               <th className="px-4 py-3 text-right font-semibold">
                 Portfolio End
@@ -46,7 +46,11 @@ export default function YearlyTable({ rows }: YearlyTableProps) {
                 }
               >
                 <td className="px-4 py-2 font-medium">{row.age}</td>
-                <td className="px-4 py-2 text-right">
+                <td className={`px-4 py-2 text-right ${
+                  row.contribution < 0
+                    ? "text-red-600 dark:text-red-400"
+                    : ""
+                }`}>
                   {formatCurrency(row.contribution)}
                 </td>
                 <td className="px-4 py-2 text-right">

@@ -87,7 +87,7 @@ export default function PortfolioChart({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-bold mb-4 dark:text-gray-100 text-gray-900">Portfolio Growth Over Time</h2>
+      <h2 className="text-xl font-bold mb-4 dark:text-gray-100 text-gray-900">Investment Growth Over Time</h2>
 
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 15 }}>
