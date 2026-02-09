@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 interface InfoTooltipProps {
   content: string;
@@ -8,10 +9,23 @@ interface InfoTooltipProps {
 
 export default function InfoTooltip({ content }: InfoTooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isVisible && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.top,
+        left: rect.right + 8, // 8px gap from button
+      });
+    }
+  }, [isVisible]);
 
   return (
     <div className="relative inline-block ml-1">
       <button
+        ref={buttonRef}
         type="button"
         onMouseEnter={() => setIsVisible(true)}
         onMouseLeave={() => setIsVisible(false)}
@@ -22,12 +36,20 @@ export default function InfoTooltip({ content }: InfoTooltipProps) {
       >
         i
       </button>
-      {isVisible && (
-        <div className="absolute z-10 w-64 p-2 text-xs text-white bg-gray-900 rounded shadow-lg left-6 top-0 dark:bg-gray-700">
-          <div className="absolute w-2 h-2 bg-gray-900 dark:bg-gray-700 transform rotate-45 -left-1 top-1"></div>
-          {content}
-        </div>
-      )}
+      {isVisible &&
+        createPortal(
+          <div
+            className="fixed z-[9999] w-64 p-2 text-xs text-white bg-gray-900 rounded shadow-lg dark:bg-gray-700"
+            style={{
+              top: `${position.top}px`,
+              left: `${position.left}px`,
+            }}
+          >
+            <div className="absolute w-2 h-2 bg-gray-900 dark:bg-gray-700 transform rotate-45 -left-1 top-1"></div>
+            {content}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

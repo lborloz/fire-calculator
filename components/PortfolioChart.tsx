@@ -74,6 +74,17 @@ export default function PortfolioChart({
     return null;
   };
 
+  // Format Y-axis values smartly
+  const formatYAxis = (value: number) => {
+    if (value >= 1000000) {
+      return `$${(value / 1000000).toFixed(1)}M`;
+    } else if (value >= 1000) {
+      return `$${(value / 1000).toFixed(0)}k`;
+    } else {
+      return `$${value.toFixed(0)}`;
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
       <h2 className="text-xl font-bold mb-4 dark:text-gray-100 text-gray-900">Portfolio Growth Over Time</h2>
@@ -93,15 +104,13 @@ export default function PortfolioChart({
           <CartesianGrid strokeDasharray="3 3" className="stroke-gray-300 dark:stroke-gray-600" opacity={0.5} />
           <XAxis
             dataKey="age"
-            label={{ value: "Age", position: "insideBottom", offset: 0 }}
+            label={{ value: "Age", position: "insideBottom", offset: -15 }}
             className="dark:fill-gray-300"
             tick={{ fill: "currentColor" }}
           />
           <YAxis
             domain={[0, maxValue]}
-            tickFormatter={(value) =>
-              `$${(value / 1000).toFixed(0)}k`
-            }
+            tickFormatter={formatYAxis}
             className="dark:fill-gray-300"
             tick={{ fill: "currentColor" }}
             width={80}

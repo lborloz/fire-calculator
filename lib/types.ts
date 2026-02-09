@@ -21,6 +21,7 @@ export interface ContributionPhase {
 export interface RetirementInputs {
   // User profile
   currentAge: number;
+  lifeExpectancy?: number; // Max age for simulation (default: 90 in UI, 100 in tests)
 
   // Financial inputs
   initialInvestment: number;

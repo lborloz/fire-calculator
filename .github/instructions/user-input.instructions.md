@@ -29,3 +29,13 @@ applyTo: "**"
 3. **Exit Condition**:
 
    - If the user enters `"stop"` when prompted, exit the loop and terminate the process.
+
+### 🎭 Visual Verification Requirement
+
+**Whenever the user mentions a visual issue or asks about layout/appearance:**
+- ALWAYS use the Playwright MCP server to navigate to the page (http://localhost:3000)
+- Take a screenshot and/or snapshot to verify the current state
+- Make the necessary changes
+- Verify the changes visually with Playwright again before responding
+
+This ensures accurate understanding of visual issues and proper validation of fixes.

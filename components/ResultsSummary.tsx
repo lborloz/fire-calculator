@@ -6,11 +6,13 @@ import { formatCurrency } from "@/lib/finance";
 interface ResultsSummaryProps {
   result: SimulationResult;
   currentAge: number;
+  lifeExpectancy: number;
 }
 
 export default function ResultsSummary({
   result,
   currentAge,
+  lifeExpectancy,
 }: ResultsSummaryProps) {
   const { retirementAge, fiTarget, yearsToRetirement } = result;
 
@@ -66,8 +68,9 @@ export default function ResultsSummary({
         <div className="mt-4 p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded">
           <p className="text-sm text-yellow-800 dark:text-yellow-200">
             <strong>Note:</strong> Based on current inputs, you may not reach your
-            FI target within 100 years. Consider increasing contributions or
-            adjusting your retirement spending.
+            FI target within your life expectancy ({lifeExpectancy - currentAge}{" "}
+            years). Consider increasing contributions or adjusting your retirement
+            spending.
           </p>
         </div>
       )}

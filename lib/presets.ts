@@ -6,9 +6,10 @@ import { Preset, RetirementInputs } from "./types";
 
 export const PRESETS: Record<string, Preset> = {
   balanced: {
-    name: "Balanced (Default)",
+    name: "Balanced",
     inputs: {
       currentAge: 30,
+      lifeExpectancy: 90,
       initialInvestment: 50000,
       monthlyRetirementSpend: 4000,
       expectedYearlyReturn: 10,
@@ -30,6 +31,7 @@ export const PRESETS: Record<string, Preset> = {
     name: "Conservative",
     inputs: {
       currentAge: 25,
+      lifeExpectancy: 90,
       initialInvestment: 25000,
       monthlyRetirementSpend: 3500,
       expectedYearlyReturn: 7,
@@ -51,6 +53,7 @@ export const PRESETS: Record<string, Preset> = {
     name: "Aggressive",
     inputs: {
       currentAge: 35,
+      lifeExpectancy: 90,
       initialInvestment: 100000,
       monthlyRetirementSpend: 5000,
       expectedYearlyReturn: 12,

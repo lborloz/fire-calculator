@@ -10,8 +10,6 @@ import {
   ContributionPhase,
 } from "./types";
 
-const MAX_AGE = 100;
-
 /**
  * Main simulation function
  * Runs a year-by-year simulation until retirement or max years
@@ -21,6 +19,7 @@ export function simulateRetirement(
 ): SimulationResult {
   const {
     currentAge,
+    lifeExpectancy = 100, // Default to 100 if not provided (for backward compatibility with tests)
     initialInvestment,
     monthlyRetirementSpend,
     expectedYearlyReturn,
@@ -61,8 +60,8 @@ export function simulateRetirement(
     (a, b) => a.startAge - b.startAge
   );
 
-  // Run yearly simulation until age 100
-  const maxYears = MAX_AGE - currentAge;
+  // Run yearly simulation until life expectancy
+  const maxYears = lifeExpectancy - currentAge;
   for (let year = 0; year <= maxYears; year++) {
     const age = currentAge + year;
 

@@ -76,52 +76,47 @@ export default function InputsForm({
   };
 
   return (
-    <div className="space-y-6 md:space-y-8">
-      {/* User Profile */}
-      <section>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
-              Current Age
-              <InfoTooltip content="Your current age. The calculator will simulate from this age until age 100 or retirement." />
-            </label>
-            <NumberInput
-              value={inputs.currentAge}
-              onChange={(value) =>
-                handleCurrentAgeChange(value ?? 18)
-              }
-              className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-              min={18}
-              max={80}
-              step={1}
-            />
-          </div>
-        </div>
-      </section>
+    <div className="space-y-4">
+      {/* Current Age */}
+      <div>
+        <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
+          Current Age
+          <InfoTooltip content="Your current age. The calculator will simulate from this age until age 100 or retirement." />
+        </label>
+        <NumberInput
+          value={inputs.currentAge}
+          onChange={(value) =>
+            handleCurrentAgeChange(value ?? 18)
+          }
+          className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+          min={18}
+          max={80}
+          step={1}
+        />
+      </div>
 
-      {/* Financial Inputs */}
-      <section>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
-              Initial Investment ($)
-              <InfoTooltip content="Your current portfolio balance or starting investment amount. This is treated as the first contribution." />
-            </label>
-            <CurrencyInput
-              value={inputs.initialInvestment}
-              onChange={(value) => updateInput("initialInvestment", value)}
-              className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-              min={0}
-              step={1000}
-            />
-          </div>
+      {/* Initial Investment */}
+      <div>
+        <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
+          Initial Investment ($)
+          <InfoTooltip content="Your current portfolio balance or starting investment amount. This is treated as the first contribution." />
+        </label>
+        <CurrencyInput
+          value={inputs.initialInvestment}
+          onChange={(value) => updateInput("initialInvestment", value)}
+          className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+          min={0}
+          step={1000}
+        />
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
-              Retirement Spending ($)
-              <InfoTooltip content="How much you plan to spend in retirement. Used to calculate your FI target number based on the Safe Withdrawal Rate." />
-            </label>
-            <div className="mb-2 flex gap-4">
+      {/* Retirement Spending */}
+      <div>
+        <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
+          Retirement Spending ($)
+          <InfoTooltip content="How much you plan to spend in retirement. Used to calculate your FI target number based on the Withdrawal Rate." />
+        </label>
+        <div className="mb-1 flex gap-4">
               <label className="flex items-center text-sm">
                 <input
                   type="radio"
@@ -158,7 +153,7 @@ export default function InputsForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
               Expected Yearly Return (%)
               <InfoTooltip content="Your expected annual investment return rate. Historical stock market average is ~10% nominal. Be conservative for planning." />
             </label>
@@ -175,7 +170,7 @@ export default function InputsForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
               Inflation Rate (%)
               <InfoTooltip content="Expected annual inflation rate. Historical US average is ~3%. This adjusts your returns in Real mode." />
             </label>
@@ -192,7 +187,7 @@ export default function InputsForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
               Inflation Mode
               <InfoTooltip content="Real mode (recommended): Adjusts returns for inflation and treats spending as today's dollars. Nominal mode: Uses raw returns without adjustment." />
             </label>
@@ -215,7 +210,7 @@ export default function InputsForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
               Compounding Interval
               <InfoTooltip content="How often returns compound. Monthly compounding gives slightly higher returns than yearly due to compound interest." />
             </label>
@@ -235,8 +230,8 @@ export default function InputsForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
-              Safe Withdrawal Rate (%)
+            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
+              Withdrawal Rate (%)
               <InfoTooltip content="Percentage of portfolio you can safely withdraw annually. The '4% rule' is based on historical success rates. Lower rates are more conservative." />
             </label>
             <input
@@ -256,7 +251,7 @@ export default function InputsForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
               Retirement Buffer Multiplier
               <InfoTooltip content="Safety buffer for your FI target. 1.0x = no buffer, 1.25x = 25% extra cushion. Higher values delay retirement but increase security." />
             </label>
@@ -278,8 +273,23 @@ export default function InputsForm({
               {inputs.retirementBufferMultiplier.toFixed(2)}x
             </div>
           </div>
-        </div>
-      </section>
+
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
+              Life Expectancy (Age)
+              <InfoTooltip content="The maximum age to simulate. Chart and table will show projections up to this age. Default is 90." />
+            </label>
+            <NumberInput
+              value={inputs.lifeExpectancy}
+              onChange={(value) =>
+                updateInput("lifeExpectancy", value ?? 90)
+              }
+              className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+              min={inputs.currentAge + 1}
+              max={120}
+              step={1}
+            />
+          </div>
 
       {/* Cash Flow Phases */}
       <section>
@@ -295,14 +305,12 @@ export default function InputsForm({
             >
               <div className="flex justify-between items-center mb-3">
                 <h3 className="font-medium text-sm md:text-base">Phase {index + 1}</h3>
-                {inputs.contributionPhases.length > 1 && (
-                  <button
-                    onClick={() => removePhase(index)}
-                    className="text-red-600 text-xs md:text-sm hover:underline"
-                  >
-                    Remove
-                  </button>
-                )}
+                <button
+                  onClick={() => removePhase(index)}
+                  className="text-red-600 text-xs md:text-sm hover:underline"
+                >
+                  Remove
+                </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

@@ -11,6 +11,7 @@ export function encodeInputsToUrl(inputs: RetirementInputs): string {
   const params = new URLSearchParams();
 
   params.set("age", inputs.currentAge.toString());
+  params.set("life", (inputs.lifeExpectancy ?? 90).toString());
   params.set("initial", inputs.initialInvestment.toString());
   params.set("spend", inputs.monthlyRetirementSpend.toString());
   params.set("return", inputs.expectedYearlyReturn.toString());
@@ -38,6 +39,9 @@ export function decodeInputsFromUrl(
 
     if (searchParams.has("age")) {
       inputs.currentAge = parseFloat(searchParams.get("age")!);
+    }
+    if (searchParams.has("life")) {
+      inputs.lifeExpectancy = parseFloat(searchParams.get("life")!);
     }
     if (searchParams.has("initial")) {
       inputs.initialInvestment = parseFloat(searchParams.get("initial")!);

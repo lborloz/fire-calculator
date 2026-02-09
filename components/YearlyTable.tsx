@@ -8,9 +8,6 @@ interface YearlyTableProps {
 }
 
 export default function YearlyTable({ rows }: YearlyTableProps) {
-  // Show only first 50 rows for performance, or all if less than 50
-  const displayRows = rows.slice(0, 50);
-
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
       <h2 className="text-xl font-bold p-4 border-b dark:border-gray-700 dark:text-gray-100">
@@ -39,7 +36,7 @@ export default function YearlyTable({ rows }: YearlyTableProps) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {displayRows.map((row, index) => (
+            {rows.map((row, index) => (
               <tr
                 key={index}
                 className={
@@ -80,12 +77,6 @@ export default function YearlyTable({ rows }: YearlyTableProps) {
           </tbody>
         </table>
       </div>
-
-      {rows.length > 50 && (
-        <div className="p-4 text-sm text-gray-600 dark:text-gray-400 text-center border-t dark:border-gray-700">
-          Showing first 50 of {rows.length} years
-        </div>
-      )}
     </div>
   );
 }

@@ -46,33 +46,21 @@ export default function Calculator() {
     router.replace(`/?${queryString}`, { scroll: false });
   }, [inputs, router]);
 
-  // Check if inputs match any preset (excluding preserved fields)
+  // Check if inputs match any preset (excluding preserved fields like age, investment, spending, and phases)
   useEffect(() => {
     let matchedPreset: string | null = null;
-
-    // Normalize phases for comparison by adjusting first phase start age to current age
-    const normalizePhases = (phases: typeof inputs.contributionPhases, currentAge: number) => {
-      return phases.map((phase, index) =>
-        index === 0 ? { ...phase, startAge: currentAge } : phase
-      );
-    };
 
     for (const [key, preset] of Object.entries(PRESETS)) {
       const presetInputs = preset.inputs;
 
-      // Normalize both preset and current phases for comparison
-      const normalizedPresetPhases = normalizePhases(presetInputs.contributionPhases, inputs.currentAge);
-      const normalizedCurrentPhases = normalizePhases(inputs.contributionPhases, inputs.currentAge);
-
-      // Compare only non-preserved fields
+      // Compare only non-preserved fields (not age, investment, spending, life expectancy, or phases)
       if (
         presetInputs.expectedYearlyReturn === inputs.expectedYearlyReturn &&
         presetInputs.inflationRate === inputs.inflationRate &&
         presetInputs.inflationMode === inputs.inflationMode &&
         presetInputs.compoundingInterval === inputs.compoundingInterval &&
         presetInputs.safeWithdrawalRate === inputs.safeWithdrawalRate &&
-        presetInputs.retirementBufferMultiplier === inputs.retirementBufferMultiplier &&
-        JSON.stringify(normalizedPresetPhases) === JSON.stringify(normalizedCurrentPhases)
+        presetInputs.retirementBufferMultiplier === inputs.retirementBufferMultiplier
       ) {
         matchedPreset = key;
         break;
@@ -81,12 +69,40 @@ export default function Calculator() {
     setActivePreset(matchedPreset);
   }, [inputs]);
 
-  // Handle current age change - update first phase start age if phases haven't been modified
+  // Handle current age change - update phase ages with constraints
   const handleCurrentAgeChange = (newAge: number) => {
-    if (!phasesManuallyModified && inputs.contributionPhases.length > 0) {
-      const updatedPhases = [...inputs.contributionPhases];
-      updatedPhases[0] = { ...updatedPhases[0], startAge: newAge };
+    const ageDifference = newAge - inputs.currentAge;
+
+    if (ageDifference !== 0 && inputs.contributionPhases.length > 0) {
+      const updatedPhases = inputs.contributionPhases.map(phase => {
+        let newStartAge = phase.startAge;
+        let newEndAge = phase.endAge;
+
+        if (ageDifference > 0) {
+          // Age increased: shift all phases up by the difference
+          newStartAge = phase.startAge + ageDifference;
+          newEndAge = phase.endAge !== undefined ? phase.endAge + ageDifference : undefined;
+        } else {
+          // Age decreased: only shift phases that would be in the past
+          if (phase.startAge < newAge) {
+            // Phase start would be before current age, shift it up to current age
+            const shiftAmount = newAge - phase.startAge;
+            newStartAge = newAge;
+            // Also shift end age by the same amount to preserve duration
+            newEndAge = phase.endAge !== undefined ? phase.endAge + shiftAmount : undefined;
+          }
+          // Otherwise keep the phase ages unchanged (don't shift down)
+        }
+
+        return {
+          ...phase,
+          startAge: newStartAge,
+          endAge: newEndAge,
+        };
+      });
       setInputs({ ...inputs, currentAge: newAge, contributionPhases: updatedPhases });
+    } else {
+      setInputs({ ...inputs, currentAge: newAge });
     }
   };
 
@@ -100,29 +116,23 @@ export default function Calculator() {
 
     if (isModified) {
       const confirmed = window.confirm(
-        "Loading this preset will reset some of your inputs (except age, initial investment, and retirement spending). Continue?"
+        "Loading this preset will update calculation settings (except age, initial investment, retirement spending, and cash flow phases). Continue?"
       );
       if (!confirmed) return;
     }
 
-    // Preserve current age, initial investment, and retirement spending
+    // Preserve current age, initial investment, retirement spending, life expectancy, and cash flow phases
     const newInputs = {
       ...preset.inputs,
       currentAge: inputs.currentAge,
+      lifeExpectancy: inputs.lifeExpectancy,
       initialInvestment: inputs.initialInvestment,
       monthlyRetirementSpend: inputs.monthlyRetirementSpend,
-      contributionPhases: preset.inputs.contributionPhases.map((phase, index) => {
-        // Update first phase start age to match current age
-        if (index === 0) {
-          return { ...phase, startAge: inputs.currentAge };
-        }
-        return phase;
-      }),
+      contributionPhases: inputs.contributionPhases, // Keep user's current phases
     };
 
     setInputs(newInputs);
     setActivePreset(presetKey);
-    setPhasesManuallyModified(false);
   };
 
   // Share functionality
@@ -166,24 +176,25 @@ export default function Calculator() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-        {/* Presets */}
-        <div className="mb-6 md:mb-8">
-          <h2 className="text-base md:text-lg font-semibold mb-3">Quick Presets</h2>
-          <SegmentedControl
-            options={['conservative', 'balanced', 'aggressive'].map((key) => ({
-              key,
-              label: PRESETS[key].name,
-            }))}
-            value={activePreset}
-            onChange={loadPreset}
-          />
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-          {/* Left Column: Inputs */}
+          {/* Left Column: Inputs with Quick Presets - Sticky on Desktop */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 md:p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 md:p-6 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] overflow-y-auto">
               <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Inputs</h2>
+
+              {/* Quick Presets */}
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold mb-3 text-gray-900 dark:text-gray-100">Quick Presets</h3>
+                <SegmentedControl
+                  options={['conservative', 'balanced', 'aggressive'].map((key) => ({
+                    key,
+                    label: PRESETS[key].name,
+                  }))}
+                  value={activePreset}
+                  onChange={loadPreset}
+                />
+              </div>
+
               <InputsForm
                 inputs={inputs}
                 onChange={setInputs}
@@ -192,9 +203,13 @@ export default function Calculator() {
             </div>
           </div>
 
-          {/* Right Column: Results */}
+          {/* Right Column: Results - Normal Scrolling */}
           <div className="lg:col-span-2 space-y-6 md:space-y-8">
-            <ResultsSummary result={result} currentAge={inputs.currentAge} />
+            <ResultsSummary
+              result={result}
+              currentAge={inputs.currentAge}
+              lifeExpectancy={inputs.lifeExpectancy ?? 90}
+            />
             <PortfolioChart
               rows={result.rows}
               retirementAge={result.retirementAge}
