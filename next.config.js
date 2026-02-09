@@ -5,7 +5,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/FIRE-Calculator' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '/fire-calculator' : '',
 }
 
 module.exports = nextConfig
