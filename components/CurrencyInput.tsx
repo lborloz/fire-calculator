@@ -57,34 +57,14 @@ export default function CurrencyInput({
   };
 
   return (
-    <div className="relative">
-      <input
-        type="text"
-        value={formatWithCommas(value)}
-        onChange={handleChange}
-        className={className}
-        min={min}
-        max={max}
-        step={step}
-      />
-      <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col">
-        <button
-          type="button"
-          onClick={increment}
-          className="px-2 py-0.5 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-          aria-label="Increment"
-        >
-          ▲
-        </button>
-        <button
-          type="button"
-          onClick={decrement}
-          className="px-2 py-0.5 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-          aria-label="Decrement"
-        >
-          ▼
-        </button>
-      </div>
-    </div>
+    <input
+      type="number"
+      value={value}
+      onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+      step={getSmartIncrement(value)}
+      className={className}
+      min={min}
+      max={max}
+    />
   );
 }

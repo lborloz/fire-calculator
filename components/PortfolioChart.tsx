@@ -63,7 +63,7 @@ export default function PortfolioChart({
       <h2 className="text-xl font-bold mb-4 dark:text-gray-100">Portfolio Growth Over Time</h2>
 
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 30 }}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}>
           <defs>
             <linearGradient id="colorContributions" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#F97316" stopOpacity={0.8} />
@@ -89,12 +89,12 @@ export default function PortfolioChart({
               value: "Portfolio Value",
               angle: -90,
               position: "insideLeft",
-              offset: 10,
+              offset: -5,
               style: { textAnchor: 'middle', fill: 'currentColor' }
             }}
             className="dark:fill-gray-300"
             tick={{ fill: "currentColor" }}
-            width={80}
+            width={90}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend

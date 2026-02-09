@@ -165,7 +165,7 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           {/* Left Column: Inputs */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 md:p-6 lg:sticky lg:top-8">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 md:p-6">
               <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Inputs</h2>
               <InputsForm
                 inputs={inputs}
