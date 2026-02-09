@@ -6,12 +6,11 @@
     </linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)" />
-  <text x="90" y="260" font-size="140" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji">🔥</text>
-  <text x="90" y="320" font-size="44" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" fill="#111827">FIRE</text>
-  <text x="90" y="390" font-size="72" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" fill="#111827">
+  <text x="220" y="340" font-size="120" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji">🔥</text>
+  <text x="350" y="340" font-size="72" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" fill="#111827">
     FIRE Calculator
   </text>
-  <text x="90" y="460" font-size="32" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" fill="#374151">
+  <text x="220" y="410" font-size="32" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" fill="#374151">
     Plan your path to Financial Independence and Early Retirement
   </text>
 </svg>

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: "FIRE Calculator",
     images: [
       {
-        url: "/og.svg",
+        url: "/og.png",
         width: 1200,
         height: 630,
         alt: "FIRE Calculator preview",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "FIRE Calculator - Plan Your Financial Independence",
     description: "Calculate your path to Financial Independence and Early Retirement.",
-    images: ["/og.svg"],
+    images: ["/og.png"],
   },
   icons: {
     icon: "/android-chrome-192x192.svg",
