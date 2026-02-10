@@ -12,6 +12,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
     "next": "^16.1.6",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
