@@ -442,7 +442,7 @@ describe("Financial Calculations", () => {
       // First year should use percentage (4%), not fixed $36,000
       const firstRetirementYear = result.rows.find(r => r.age === 30);
       expect(firstRetirementYear?.retired).toBe(true);
-      
+
       // After growth, portfolio should be ~1,070,000
       // Withdrawal should be 4% of that, not fixed $36,000
       const expectedWithdrawal = firstRetirementYear!.portfolioEnd / (1 - 0.04) * 0.04;

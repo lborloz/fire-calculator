@@ -75,7 +75,7 @@ export function simulateRetirement(
     if (!retired) {
       const effectiveWithdrawalRate = getWithdrawalRate(age, sortedOverrides, swr);
       const fiTargetForThisAge = (annualRetirementSpend / effectiveWithdrawalRate) * retirementBufferMultiplier;
-      
+
       if (portfolio >= fiTargetForThisAge) {
         retired = true;
         retirementAge = age;

@@ -94,7 +94,7 @@ export default function InputsForm({
   const addOverride = () => {
     const lastOverride =
       inputs.withdrawalOverrides[inputs.withdrawalOverrides.length - 1];
-    
+
     // Default to retirement age if available, otherwise use last override end age or current age
     let startAge: number;
     if (retirementAge !== null && retirementAge !== undefined) {
