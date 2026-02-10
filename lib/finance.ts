@@ -87,7 +87,18 @@ export function simulateRetirement(
     portfolio += growth;
 
     // Calculate withdrawal (only if retired)
-    const withdrawal = retired ? annualRetirementSpend : 0;
+    // First year of retirement: use fixed annual spend
+    // Subsequent years: use safe withdrawal rate percentage of portfolio
+    let withdrawal = 0;
+    if (retired) {
+      if (age === retirementAge) {
+        // First year of retirement: use fixed amount
+        withdrawal = annualRetirementSpend;
+      } else {
+        // Subsequent years: use SWR percentage of current portfolio
+        withdrawal = portfolio * swr;
+      }
+    }
     portfolio -= withdrawal;
 
     // Record this year
