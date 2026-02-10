@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { RetirementInputs } from "@/lib/types";
 import { simulateRetirement } from "@/lib/finance";
@@ -23,6 +23,9 @@ export default function Calculator() {
     }
     return DEFAULT_INPUTS;
   });
+
+  // Track the last "committed" age (after blur/phase adjustments)
+  const committedAgeRef = useRef<number>(inputs.currentAge);
 
   const [darkMode, setDarkMode] = useState(false);
 
@@ -71,7 +74,8 @@ export default function Calculator() {
 
   // Handle current age change - update phase ages with constraints
   const handleCurrentAgeChange = (newAge: number) => {
-    const ageDifference = newAge - inputs.currentAge;
+    // Calculate difference from the last committed age, not from inputs.currentAge
+    const ageDifference = newAge - committedAgeRef.current;
 
     if (ageDifference !== 0 && inputs.contributionPhases.length > 0) {
       const updatedPhases = inputs.contributionPhases.map(phase => {
@@ -104,6 +108,9 @@ export default function Calculator() {
     } else {
       setInputs({ ...inputs, currentAge: newAge });
     }
+
+    // Update the committed age ref
+    committedAgeRef.current = newAge;
   };
 
   // Handle preset selection with warning

@@ -5,6 +5,7 @@ import { ChangeEvent } from "react";
 interface NumberInputProps {
   value: number | undefined;
   onChange: (value: number | undefined) => void;
+  onBlur?: (finalValue: number | undefined) => void;
   className?: string;
   min?: number;
   max?: number;
@@ -15,6 +16,7 @@ interface NumberInputProps {
 export default function NumberInput({
   value,
   onChange,
+  onBlur,
   className = "",
   min,
   max,
@@ -23,11 +25,36 @@ export default function NumberInput({
 }: NumberInputProps) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    if (val === "") {
+    if (val === "" || val === "-") {
       onChange(undefined);
     } else {
       const parsed = parseFloat(val);
-      onChange(isNaN(parsed) ? undefined : parsed);
+      if (!isNaN(parsed)) {
+        // Allow intermediate values during typing, min/max enforced on blur/arrows
+        onChange(parsed);
+      }
+    }
+  };
+
+  const handleBlur = () => {
+    let finalValue = value;
+    // Enforce min/max when user leaves the field
+    if (value !== undefined) {
+      let newValue = value;
+      if (min !== undefined && newValue < min) newValue = min;
+      if (max !== undefined && newValue > max) newValue = max;
+      if (newValue !== value) {
+        onChange(newValue);
+      }
+      finalValue = newValue;
+    } else if (min !== undefined) {
+      // If empty on blur, set to minimum
+      onChange(min);
+      finalValue = min;
+    }
+    // Call custom onBlur handler with the final validated value
+    if (onBlur) {
+      onBlur(finalValue);
     }
   };
 
@@ -52,13 +79,12 @@ export default function NumberInput({
   return (
     <div className="relative">
       <input
-        type="number"
+        type="text"
+        inputMode="numeric"
         value={value ?? ""}
         onChange={handleChange}
-        className={`${className} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
-        min={min}
-        max={max}
-        step={step}
+        onBlur={handleBlur}
+        className={className}
         placeholder={placeholder}
       />
       <div className="absolute right-0 top-0 bottom-0 flex flex-col w-6 border-l border-gray-300 dark:border-gray-600">
