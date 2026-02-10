@@ -7,6 +7,10 @@ interface InfoTooltipProps {
   content: string;
 }
 
+// Tooltip width must match the w-64 Tailwind class (16rem = 256px)
+const TOOLTIP_WIDTH = 256;
+const TOOLTIP_GAP = 8;
+
 export default function InfoTooltip({ content }: InfoTooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -16,15 +20,13 @@ export default function InfoTooltip({ content }: InfoTooltipProps) {
   useEffect(() => {
     if (isVisible && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const tooltipWidth = 256; // w-64 = 16rem = 256px
-      const gap = 8;
       const viewportWidth = window.innerWidth;
 
       // Check if tooltip would overflow on the right
-      const wouldOverflowRight = rect.right + gap + tooltipWidth > viewportWidth;
+      const wouldOverflowRight = rect.right + TOOLTIP_GAP + TOOLTIP_WIDTH > viewportWidth;
 
       // Check if there's enough space on the left
-      const enoughSpaceOnLeft = rect.left - gap - tooltipWidth >= 0;
+      const enoughSpaceOnLeft = rect.left - TOOLTIP_GAP - TOOLTIP_WIDTH >= 0;
 
       // Decide placement
       const newPlacement = wouldOverflowRight && enoughSpaceOnLeft ? "left" : "right";
@@ -34,12 +36,12 @@ export default function InfoTooltip({ content }: InfoTooltipProps) {
       if (newPlacement === "left") {
         setPosition({
           top: rect.top,
-          left: rect.left - tooltipWidth - gap,
+          left: rect.left - TOOLTIP_WIDTH - TOOLTIP_GAP,
         });
       } else {
         setPosition({
           top: rect.top,
-          left: rect.right + gap,
+          left: rect.right + TOOLTIP_GAP,
         });
       }
     }
