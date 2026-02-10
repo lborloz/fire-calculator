@@ -10,15 +10,38 @@ interface InfoTooltipProps {
 export default function InfoTooltip({ content }: InfoTooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [placement, setPlacement] = useState<"right" | "left">("right");
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (isVisible && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      setPosition({
-        top: rect.top,
-        left: rect.right + 8, // 8px gap from button
-      });
+      const tooltipWidth = 256; // w-64 = 16rem = 256px
+      const gap = 8;
+      const viewportWidth = window.innerWidth;
+
+      // Check if tooltip would overflow on the right
+      const wouldOverflowRight = rect.right + gap + tooltipWidth > viewportWidth;
+
+      // Check if there's enough space on the left
+      const enoughSpaceOnLeft = rect.left - gap - tooltipWidth >= 0;
+
+      // Decide placement
+      const newPlacement = wouldOverflowRight && enoughSpaceOnLeft ? "left" : "right";
+      setPlacement(newPlacement);
+
+      // Calculate position
+      if (newPlacement === "left") {
+        setPosition({
+          top: rect.top,
+          left: rect.left - tooltipWidth - gap,
+        });
+      } else {
+        setPosition({
+          top: rect.top,
+          left: rect.right + gap,
+        });
+      }
     }
   }, [isVisible]);
 
@@ -45,7 +68,11 @@ export default function InfoTooltip({ content }: InfoTooltipProps) {
               left: `${position.left}px`,
             }}
           >
-            <div className="absolute w-2 h-2 bg-gray-900 dark:bg-gray-700 transform rotate-45 -left-1 top-1"></div>
+            <div
+              className={`absolute w-2 h-2 bg-gray-900 dark:bg-gray-700 transform rotate-45 top-1 ${
+                placement === "left" ? "-right-1" : "-left-1"
+              }`}
+            ></div>
             {content}
           </div>,
           document.body
