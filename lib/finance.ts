@@ -71,10 +71,9 @@ export function simulateRetirement(
     const age = currentAge + year;
 
     // Determine if we've just reached retirement
-    // Check based on the effective withdrawal rate for this age (including overrides)
+    // Use the base withdrawal rate; overrides only apply after retirement
     if (!retired) {
-      const effectiveWithdrawalRate = getWithdrawalRate(age, sortedOverrides, swr);
-      const fiTargetForThisAge = (annualRetirementSpend / effectiveWithdrawalRate) * retirementBufferMultiplier;
+      const fiTargetForThisAge = (annualRetirementSpend / swr) * retirementBufferMultiplier;
 
       if (portfolio >= fiTargetForThisAge) {
         retired = true;

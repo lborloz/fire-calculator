@@ -142,14 +142,11 @@ export default function InputsForm({
           value={inputs.currentAge}
           onChange={(value) => {
             // Just update the age value during typing, don't adjust phases yet
-            console.log('[InputsForm] Age onChange:', value);
             updateInput("currentAge", value ?? 18);
           }}
           onBlur={(finalValue) => {
             // Adjust phases when user finishes editing the age
-            console.log('[InputsForm] Age onBlur, finalValue:', finalValue, 'onCurrentAgeChange:', onCurrentAgeChange);
             if (finalValue !== undefined && onCurrentAgeChange) {
-              console.log('[InputsForm] Calling onCurrentAgeChange with:', finalValue);
               onCurrentAgeChange(finalValue);
             }
           }}
