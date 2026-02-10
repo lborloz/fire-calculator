@@ -26,13 +26,15 @@ export default function PortfolioChart({
   const [showGrowth, setShowGrowth] = useState(true);
 
   // Transform data for stacked area chart
-  const chartData = rows.map((row) => ({
-    age: row.age,
-    contributions: row.totalContributions,
-    growth: Math.max(0, row.portfolioEnd - row.totalContributions),
-    portfolio: row.portfolioEnd,
-    retired: row.retired,
-  }));
+  const chartData = useMemo(() => {
+    return rows.map((row) => ({
+      age: row.age,
+      contributions: row.totalContributions,
+      growth: Math.max(0, row.portfolioEnd - row.totalContributions),
+      portfolio: row.portfolioEnd,
+      retired: row.retired,
+    }));
+  }, [rows]);
 
   // Calculate max value for Y-axis based on visible lines
   const maxValue = useMemo(() => {

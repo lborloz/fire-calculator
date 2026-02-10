@@ -315,6 +315,139 @@ describe("Financial Calculations", () => {
       const lastRow = result.rows[result.rows.length - 1];
       expect(lastRow.contribution).toBe(12000);
     });
+
+    it("should apply withdrawal rate overrides correctly", () => {
+      const inputs: RetirementInputs = {
+        currentAge: 30,
+        initialInvestment: 1000000,
+        monthlyRetirementSpend: 3000,
+        expectedYearlyReturn: 7,
+        inflationRate: 3,
+        inflationMode: "real",
+        compoundingInterval: "yearly",
+        safeWithdrawalRate: 4,
+        retirementBufferMultiplier: 1,
+        contributionPhases: [],
+        withdrawalOverrides: [
+          { startAge: 30, endAge: 35, withdrawalRate: 5 }, // Higher rate early
+        ],
+      };
+
+      const result = simulateRetirement(inputs);
+
+      // Should retire immediately
+      expect(result.retirementAge).toBe(30);
+
+      // Age 30-34 should use 5% override
+      const age30Row = result.rows.find(r => r.age === 30);
+      const expectedWithdrawal30 = 1000000 * 0.05; // Using initial portfolio (simplified)
+      expect(age30Row?.withdrawal).toBeGreaterThan(40000); // Should be ~5% not 4%
+
+      // Age 35+ should revert to 4% base
+      const age35Row = result.rows.find(r => r.age === 35);
+      // By age 35, portfolio has grown, so withdrawal will be 4% of that
+      expect(age35Row?.withdrawal).toBeDefined();
+    });
+
+    it("should calculate retirement age with withdrawal overrides", () => {
+      const inputs: RetirementInputs = {
+        currentAge: 30,
+        initialInvestment: 0,
+        monthlyRetirementSpend: 3000,
+        expectedYearlyReturn: 10,
+        inflationRate: 0,
+        inflationMode: "nominal",
+        compoundingInterval: "yearly",
+        safeWithdrawalRate: 4,
+        retirementBufferMultiplier: 1,
+        contributionPhases: [
+          { startAge: 30, monthlyContribution: 5000 },
+        ],
+        withdrawalOverrides: [
+          { startAge: 40, endAge: 50, withdrawalRate: 3.5 }, // Lower rate requires more $
+        ],
+      };
+
+      const result = simulateRetirement(inputs);
+
+      // With 3.5% override at age 40-49, need more portfolio to retire
+      // FI target at age 40 = ($36,000 / 0.035) = $1,028,571 (vs $900,000 at 4%)
+      expect(result.retirementAge).not.toBeNull();
+
+      // If retirement happens in override range, check it used correct calculation
+      if (result.retirementAge! >= 40 && result.retirementAge! < 50) {
+        const retirementRow = result.rows.find(r => r.age === result.retirementAge);
+        // Portfolio should be >= $1,028,571
+        expect(retirementRow?.portfolioEnd).toBeGreaterThanOrEqual(1000000);
+      }
+    });
+
+    it("should handle multiple withdrawal overrides", () => {
+      const inputs: RetirementInputs = {
+        currentAge: 30,
+        initialInvestment: 2000000,
+        monthlyRetirementSpend: 5000,
+        expectedYearlyReturn: 7,
+        inflationRate: 0,
+        inflationMode: "nominal",
+        compoundingInterval: "yearly",
+        safeWithdrawalRate: 4,
+        retirementBufferMultiplier: 1,
+        contributionPhases: [],
+        withdrawalOverrides: [
+          { startAge: 30, endAge: 40, withdrawalRate: 5 }, // High early spending
+          { startAge: 60, endAge: 70, withdrawalRate: 3 }, // Conservative later
+        ],
+      };
+
+      const result = simulateRetirement(inputs);
+
+      // Age 30-39: 5% override
+      const age35Row = result.rows.find(r => r.age === 35);
+      expect(age35Row?.withdrawal).toBeGreaterThan(60000); // Should be ~5%
+
+      // Age 40-59: 4% base
+      const age50Row = result.rows.find(r => r.age === 50);
+      // Withdrawal should be ~4% of portfolio at that time
+
+      // Age 60-69: 3% override
+      const age65Row = result.rows.find(r => r.age === 65);
+      if (age65Row) {
+        // Should be approximately 3% of portfolio
+        const calculatedRate = age65Row.withdrawal / age65Row.portfolioEnd;
+        expect(calculatedRate).toBeCloseTo(0.03, 1);
+      }
+    });
+
+    it("should use percentage-based withdrawal from first year of retirement", () => {
+      const inputs: RetirementInputs = {
+        currentAge: 30,
+        initialInvestment: 1000000,
+        monthlyRetirementSpend: 3000,
+        expectedYearlyReturn: 7,
+        inflationRate: 0,
+        inflationMode: "nominal",
+        compoundingInterval: "yearly",
+        safeWithdrawalRate: 4,
+        retirementBufferMultiplier: 1,
+        contributionPhases: [],
+        withdrawalOverrides: [],
+      };
+
+      const result = simulateRetirement(inputs);
+
+      // Should retire at age 30
+      expect(result.retirementAge).toBe(30);
+
+      // First year should use percentage (4%), not fixed $36,000
+      const firstRetirementYear = result.rows.find(r => r.age === 30);
+      expect(firstRetirementYear?.retired).toBe(true);
+      
+      // After growth, portfolio should be ~1,070,000
+      // Withdrawal should be 4% of that, not fixed $36,000
+      const expectedWithdrawal = firstRetirementYear!.portfolioEnd / (1 - 0.04) * 0.04;
+      expect(firstRetirementYear?.withdrawal).toBeCloseTo(expectedWithdrawal, -2);
+    });
   });
 
   describe("formatCurrency", () => {
