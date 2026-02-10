@@ -16,6 +16,15 @@ export interface ContributionPhase {
 }
 
 /**
+ * Withdrawal override - defines a period with a custom withdrawal rate
+ */
+export interface WithdrawalOverride {
+  startAge: number;
+  endAge?: number; // undefined = until life expectancy
+  withdrawalRate: number; // as percentage (e.g., 5 for 5%)
+}
+
+/**
  * All inputs required for retirement simulation
  */
 export interface RetirementInputs {
@@ -34,6 +43,9 @@ export interface RetirementInputs {
 
   // Contribution phases
   contributionPhases: ContributionPhase[];
+
+  // Withdrawal overrides
+  withdrawalOverrides: WithdrawalOverride[];
 
   // Mode
   inflationMode: InflationMode;

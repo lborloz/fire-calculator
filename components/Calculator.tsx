@@ -199,6 +199,7 @@ export default function Calculator() {
                 inputs={inputs}
                 onChange={setInputs}
                 onCurrentAgeChange={handleCurrentAgeChange}
+                retirementAge={result.retirementAge}
               />
             </div>
           </div>

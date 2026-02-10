@@ -24,6 +24,9 @@ export function encodeInputsToUrl(inputs: RetirementInputs): string {
   // Encode phases as JSON
   params.set("phases", JSON.stringify(inputs.contributionPhases));
 
+  // Encode withdrawal overrides as JSON
+  params.set("overrides", JSON.stringify(inputs.withdrawalOverrides));
+
   return params.toString();
 }
 
@@ -77,6 +80,9 @@ export function decodeInputsFromUrl(
     }
     if (searchParams.has("phases")) {
       inputs.contributionPhases = JSON.parse(searchParams.get("phases")!);
+    }
+    if (searchParams.has("overrides")) {
+      inputs.withdrawalOverrides = JSON.parse(searchParams.get("overrides")!);
     }
 
     return inputs;

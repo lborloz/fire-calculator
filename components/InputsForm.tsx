@@ -1,6 +1,6 @@
 "use client";
 
-import { RetirementInputs, ContributionPhase, SpendInputType } from "@/lib/types";
+import { RetirementInputs, ContributionPhase, WithdrawalOverride, SpendInputType } from "@/lib/types";
 import { useState } from "react";
 import InfoTooltip from "./InfoTooltip";
 import CurrencyInput from "./CurrencyInput";
@@ -10,15 +10,18 @@ interface InputsFormProps {
   inputs: RetirementInputs;
   onChange: (inputs: RetirementInputs) => void;
   onCurrentAgeChange?: (age: number) => void;
+  retirementAge?: number | null;
 }
 
 export default function InputsForm({
   inputs,
   onChange,
   onCurrentAgeChange,
+  retirementAge,
 }: InputsFormProps) {
   const [spendInputType, setSpendInputType] = useState<SpendInputType>("monthly");
   const [phaseErrors, setPhaseErrors] = useState<Record<number, string>>({});
+  const [overrideErrors, setOverrideErrors] = useState<Record<number, string>>({});
 
   const updateInput = <K extends keyof RetirementInputs>(
     key: K,
@@ -67,6 +70,45 @@ export default function InputsForm({
   const removePhase = (index: number) => {
     const newPhases = inputs.contributionPhases.filter((_, i) => i !== index);
     updateInput("contributionPhases", newPhases);
+  };
+
+  const updateOverride = (index: number, override: WithdrawalOverride) => {
+    const newOverrides = [...inputs.withdrawalOverrides];
+    newOverrides[index] = override;
+    updateInput("withdrawalOverrides", newOverrides);
+
+    // Validate end age and start age
+    const newErrors = { ...overrideErrors };
+    if (override.endAge !== undefined && override.endAge <= override.startAge) {
+      newErrors[index] = `End age must be greater than start age (${override.startAge})`;
+    } else if (override.startAge < inputs.currentAge) {
+      newErrors[index] = `Start age must be at least ${inputs.currentAge} (your current age)`;
+    } else if (retirementAge !== null && retirementAge !== undefined && override.startAge < retirementAge) {
+      newErrors[index] = `Start age must be at least ${retirementAge} (your projected retirement age). Withdrawal overrides only apply during retirement.`;
+    } else {
+      delete newErrors[index];
+    }
+    setOverrideErrors(newErrors);
+  };
+
+  const addOverride = () => {
+    const lastOverride =
+      inputs.withdrawalOverrides[inputs.withdrawalOverrides.length - 1];
+    const startAge = lastOverride ? (lastOverride.endAge ?? inputs.currentAge) : inputs.currentAge;
+
+    updateInput("withdrawalOverrides", [
+      ...inputs.withdrawalOverrides,
+      {
+        startAge,
+        endAge: undefined,
+        withdrawalRate: inputs.safeWithdrawalRate,
+      },
+    ]);
+  };
+
+  const removeOverride = (index: number) => {
+    const newOverrides = inputs.withdrawalOverrides.filter((_, i) => i !== index);
+    updateInput("withdrawalOverrides", newOverrides);
   };
 
   // Get display value for retirement spend based on input type
@@ -392,6 +434,111 @@ export default function InputsForm({
             className="w-full py-2 px-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500"
           >
             + Add Phase
+          </button>
+        </div>
+      </section>
+
+      {/* Withdrawal Rate Overrides */}
+      <section>
+        <h2 className="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+          Withdrawal Rate Overrides
+          <InfoTooltip content="Override the base withdrawal rate for specific age ranges during retirement. Note: Overrides only apply after you retire. For example, spend more in early retirement (4.5%) and less later (3.5%). These replace the base rate during the specified years." />
+        </h2>
+        <div className="space-y-4">
+          {inputs.withdrawalOverrides.map((override, index) => (
+            <div
+              key={index}
+              className="p-3 md:p-4 border border-gray-300 dark:border-gray-600 rounded-md"
+            >
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-medium text-sm md:text-base">Override {index + 1}</h3>
+                <button
+                  onClick={() => removeOverride(index)}
+                  className="text-red-600 text-xs md:text-sm hover:underline"
+                >
+                  Remove
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-medium mb-1">
+                    Start Age
+                  </label>
+                  <NumberInput
+                    value={override.startAge}
+                    onChange={(value) =>
+                      updateOverride(index, {
+                        ...override,
+                        startAge: value ?? inputs.currentAge,
+                      })
+                    }
+                    className={`w-full px-2 py-1 pr-8 text-sm border rounded dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${
+                      overrideErrors[index]
+                        ? "border-red-500 dark:border-red-500"
+                        : "border-gray-300 dark:border-gray-600"
+                    }`}
+                    min={inputs.currentAge}
+                    step={1}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium mb-1">
+                    End Age
+                  </label>
+                  <NumberInput
+                    value={override.endAge}
+                    onChange={(value) =>
+                      updateOverride(index, {
+                        ...override,
+                        endAge: value,
+                      })
+                    }
+                    placeholder="Ongoing"
+                    className={`w-full px-2 py-1 pr-8 text-sm border rounded dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${
+                      overrideErrors[index]
+                        ? "border-red-500 dark:border-red-500"
+                        : "border-gray-300 dark:border-gray-600"
+                    }`}
+                    min={override.startAge}
+                    step={1}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium mb-1">
+                    Rate (%)
+                    <InfoTooltip content="The withdrawal rate to use during this age range. This replaces the base withdrawal rate." />
+                  </label>
+                  <NumberInput
+                    value={override.withdrawalRate}
+                    onChange={(value) =>
+                      updateOverride(index, {
+                        ...override,
+                        withdrawalRate: value ?? inputs.safeWithdrawalRate,
+                      })
+                    }
+                    className="w-full px-2 py-1 pr-8 text-sm border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                    min={0}
+                    max={10}
+                    step={0.1}
+                  />
+                </div>
+              </div>
+              {overrideErrors[index] && (
+                <p className="text-xs text-red-600 dark:text-red-400 mt-2">
+                  {overrideErrors[index]}
+                </p>
+              )}
+            </div>
+          ))}
+
+          <button
+            onClick={addOverride}
+            className="w-full py-2 px-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500"
+          >
+            + Add Withdrawal Override
           </button>
         </div>
       </section>

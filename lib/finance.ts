@@ -8,6 +8,7 @@ import {
   SimulationResult,
   YearRow,
   ContributionPhase,
+  WithdrawalOverride,
 } from "./types";
 
 /**
@@ -28,6 +29,7 @@ export function simulateRetirement(
     safeWithdrawalRate,
     retirementBufferMultiplier,
     contributionPhases,
+    withdrawalOverrides = [], // Default to empty array for backward compatibility
     inflationMode,
   } = inputs;
 
@@ -59,6 +61,9 @@ export function simulateRetirement(
   const sortedPhases = [...contributionPhases].sort(
     (a, b) => a.startAge - b.startAge
   );
+  const sortedOverrides = [...withdrawalOverrides].sort(
+    (a, b) => a.startAge - b.startAge
+  );
 
   // Run yearly simulation until life expectancy
   const maxYears = lifeExpectancy - currentAge;
@@ -66,9 +71,15 @@ export function simulateRetirement(
     const age = currentAge + year;
 
     // Determine if we've just reached retirement
-    if (!retired && portfolio >= fiTarget) {
-      retired = true;
-      retirementAge = age;
+    // Check based on the effective withdrawal rate for this age (including overrides)
+    if (!retired) {
+      const effectiveWithdrawalRate = getWithdrawalRate(age, sortedOverrides, swr);
+      const fiTargetForThisAge = (annualRetirementSpend / effectiveWithdrawalRate) * retirementBufferMultiplier;
+      
+      if (portfolio >= fiTargetForThisAge) {
+        retired = true;
+        retirementAge = age;
+      }
     }
 
     // Calculate annual contribution for this year (phases can extend past retirement)
@@ -87,17 +98,11 @@ export function simulateRetirement(
     portfolio += growth;
 
     // Calculate withdrawal (only if retired)
-    // First year of retirement: use fixed annual spend
-    // Subsequent years: use safe withdrawal rate percentage of portfolio
+    // Always use percentage-based withdrawal
     let withdrawal = 0;
     if (retired) {
-      if (age === retirementAge) {
-        // First year of retirement: use fixed amount
-        withdrawal = annualRetirementSpend;
-      } else {
-        // Subsequent years: use SWR percentage of current portfolio
-        withdrawal = portfolio * swr;
-      }
+      const effectiveWithdrawalRate = getWithdrawalRate(age, sortedOverrides, swr);
+      withdrawal = portfolio * effectiveWithdrawalRate;
     }
     portfolio -= withdrawal;
 
@@ -148,6 +153,27 @@ function calculateYearlyContribution(
   }
 
   return totalMonthlyContribution * 12;
+}
+
+/**
+ * Get the effective withdrawal rate for a given age
+ * Checks for withdrawal overrides, falls back to base SWR
+ */
+function getWithdrawalRate(
+  age: number,
+  overrides: WithdrawalOverride[],
+  baseSwr: number
+): number {
+  for (const override of overrides) {
+    const startAge = override.startAge;
+    const endAge = override.endAge ?? Infinity;
+
+    if (age >= startAge && age < endAge) {
+      return override.withdrawalRate / 100; // Convert percentage to decimal
+    }
+  }
+
+  return baseSwr; // Return base SWR if no override applies
 }
 
 /**
